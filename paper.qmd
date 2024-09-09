@@ -1,0 +1,73 @@
+---
+title: Cambios en las preferencias redistributivas en América Latina entre 2008 y 2022.
+format: 
+  html: 
+    code-fold: true
+    html-math-method: katex
+  pdf: 
+    geometry: 
+      - top=30mm
+      - left=20mm
+    template-partials: 
+      - title.tex
+    include-in-header:
+      text: |
+        \usepackage[noblocks]{authblk}
+        \renewcommand*{\Authsep}{, }
+        \renewcommand*{\Authand}{, }
+        \renewcommand*{\Authands}{, }
+        \renewcommand\Affilfont{\small}
+editor: source
+#bibliography: "../../input/bib/merit-redis-school.bib"
+author:
+  - name: Juan Carlos Castillo
+    corresponding: true
+    orcid: 0000-0003-1265-7854
+    email: juancastillov@uchile.cl
+    affiliations:
+      - ref: 1
+      - ref: 2
+      - ref: 3
+  - name: Kevin Carrasco
+    orcid: 0000-0002-9348-8361
+    email: kevin.carrasco@ug.uchile.cl
+    affiliations:
+      - ref: 2
+  - name: Julio Iturra
+    orcid: 0000-0003-1993-3479
+    email: julioiturrasanhueza@gmail.com 
+    affiliations:
+      - ref: 4
+  - name: Gonzalo Franetovic
+    orcid: 0000-0003-0337-0739
+    email: gonzalo.franetovic@gmail.com
+    affiliations:
+      - ref: 5
+affiliations: 
+  - id: 1
+    name: Universidad de Chile
+  - id: 2
+    name: Centro de estudios del conflicto y cohesión social (COES)
+  - id: 3
+    name: Núcleo milenio de desigualdades y oportunidades digitales (NUDOS)
+  - id: 4
+    name: International Graduate School of Social Sciencies (BIGSSS), University of Bremen, Germany
+  - id: 5
+    name: Department of Social and Political Sciences, University of Milan, Italy
+lang: es
+citeproc: true
+---
+
+^[Este capítulo cuenta con el apoyo de la Agencia Nacional de Investigación y Desarrollo (ANID) de Chile, a través del Proyecto Fondecyt Nº 1210847, del Núcleo Milenio sobre Desigualdades y Oportunidades Digitales (NUDOS) NCS2022_046 y del Centro de Estudios de Conflicto y Cohesión Social (COES) FONDAP/COES 1523A0005.]
+
+{{< include 01-introduction.qmd >}}
+
+{{< include 02-antecedentes.qmd >}}
+
+{{< include 03-methods.qmd >}}
+
+{{< include 04-analisis.qmd >}}
+
+{{< include 05-discussion.qmd >}}
+
+{{< include 06-conclusion.qmd >}}
