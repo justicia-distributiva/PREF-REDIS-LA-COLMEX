@@ -59,6 +59,11 @@ lang: es
 citeproc: true
 ---
 
+This document was last modified at {{< modified >}}
+
+and it was last rendered at {{< now >}}.
+
+
 ^[Este capítulo cuenta con el apoyo de la Agencia Nacional de Investigación y Desarrollo (ANID) de Chile, a través del Proyecto Fondecyt Nº 1210847, del Núcleo Milenio sobre Desigualdades y Oportunidades Digitales (NUDOS) NCS2022_046 y del Centro de Estudios de Conflicto y Cohesión Social (COES) FONDAP/COES 1523A0005.]
 
 {{< include 01-introduction.qmd >}}
