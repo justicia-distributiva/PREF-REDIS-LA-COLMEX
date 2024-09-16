@@ -1,1 +1,8 @@
+# Antecedentes
 
+## Preferencias redistributivas y factores asociados
+{{< include antecedentes01.qmd >}}
+
+
+## Contexto y cambio de preferencias en América Latina
+{{< include antecedentes02.qmd >}}

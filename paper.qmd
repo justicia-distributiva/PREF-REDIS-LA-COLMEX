@@ -4,6 +4,7 @@ format:
   html: 
     code-fold: true
     html-math-method: katex
+    number-sections: true
   pdf: 
     geometry: 
       - top=30mm
