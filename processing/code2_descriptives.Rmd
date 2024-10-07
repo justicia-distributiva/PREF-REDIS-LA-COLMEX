@@ -43,21 +43,22 @@ lapop = lapop %>%
          male_f, age, #married_f, 
          ideology_f, #employment_r, 
          education_r, 
-         #decile, decile_d10, decile_f, 
+         decile, decile_d10, decile_f, 
          zone, sysconf, 
-         gdp, gdp_mean, gdp_dif, gini, gini_mean, gini_dif, welfare)
+         gdp, gdp_mean, gdp_dif, gini, gini_mean, gini_dif, welfare,
+         corruption, corruption_dif)
 
 #Level 1
 lapop_a = lapop %>% 
-  select(redistribution, #decile, 
+  select(redistribution, decile, 
          male_f, age, 
          #married_f, 
          ideology_f, sysconf, #employment_r, 
-         education_r, zone, #decile_d10, decile_f
+         education_r, zone, decile_d10, decile_f
          ) 
 
 lapop_a = lapop_a %>%
-#  rename(income = decile) %>% 
+  rename(income = decile) %>% 
   mutate(male = as.numeric(male_f) - 1,
  #        married = as.numeric(married_f) - 1,
          ideology = as.numeric(ideology_f) - 1,
@@ -66,7 +67,7 @@ lapop_a = lapop_a %>%
          education = as.numeric(education_r) - 1)
 
 
-stargazer(as.data.frame(lapop_a), title="Descriptive Statistics", omit.summary.stat = c("p25", "p75"), type="text")
+#stargazer(as.data.frame(lapop_a), title="Descriptive Statistics", omit.summary.stat = c("p25", "p75"), type="text")
 
 prop.table(table(lapop_a$male_f))
 #prop.table(table(lapop_a$married_f))
@@ -79,7 +80,7 @@ prop.table(table(lapop_a$zone))
 country_vars_waves_a= country_vars_waves %>% 
   select(-c(year, welfare))
 
-stargazer(as.data.frame(country_vars_waves_a), title="Descriptive Statistics", omit.summary.stat = c("p25", "p75"))
+#stargazer(as.data.frame(country_vars_waves_a), title="Descriptive Statistics", omit.summary.stat = c("p25", "p75"), type="text")
 
 #Level 3
 country_vars = country_vars_waves %>% 
@@ -280,7 +281,7 @@ screenreg(m_income_ALL,
 ```{r Figure 4, echo=FALSE, message=FALSE, warning=FALSE}
 
 #Within countries
-within = lapop %>% 
+within = lapop %>%
   mutate(wave = as.numeric(paste0(wave))) %>% 
   group_by(country, wave) %>% 
   summarise_all(mean, na.rm=TRUE)
@@ -342,8 +343,190 @@ figure5
 ggsave(here("output", "graphs", "Figure5.jpg"), plot=figure5, height = 5, units="in")
 
 #Detach package conflicted
-detach("package:conflicted", unload = TRUE)
+#detach("package:conflicted", unload = TRUE)
 
 ```
+
+# Average support for redistribution and corruption, by country and year.
+
+```{r}
+figure6 <- ggplot(within, 
+            aes(x= corruption, y= redistribution, label=country)) +
+  geom_point(size = 1.5, alpha = 0.8) + 
+  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE) +
+  labs(x = "Corruption", y =  "Support for redistribution") + 
+  scale_color_grey(start=0.8, end=0.2, name="Wave") +  
+  scale_y_continuous( "Average support for redistribution", limits = c(4.5,6.6), 
+                     breaks = c(4.5,5, 5.5, 6, 6.5)) +
+  scale_x_continuous("Control of Corruption", limits = c(-2.5,2.5), 
+                     breaks = c(-2.5,0,2.5)) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position="bottom",
+        axis.text=element_text(size=10),
+        strip.text=element_text(size=10),
+        legend.text=element_text(size=10),
+        legend.title=element_text(size=10),
+        legend.key.size=unit(1,"cm"),
+        panel.background = element_rect(fill = "white")) +  
+  facet_wrap(~ wave) 
+
+figure6
+ggsave(here("output", "graphs", "Figure6.jpg"), plot=figure6, height = 5, units="in")
+```
+
+
+```{r}
+#Figure 7: Average support for redistribution and trust in institutions, by country and year (facet)
+figure7= ggplot(within, 
+            aes(x= sysconf, y= redistribution, label=country)) +
+  geom_point(size = 1.5, alpha = 0.8) + 
+  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE) +
+  labs(x = "Inequality", y =  "Support for redistribution") + 
+  scale_color_grey(start=0.8, end=0.2, name="Wave") +  
+  scale_y_continuous( "Average support for redistribution", limits = c(4.5,6.6), 
+                     breaks = c(4.5,5, 5.5, 6, 6.5)) +
+  scale_x_continuous("Trust in institutions", limits = c(1,7), 
+                     breaks = c(1,2,3,4,5,6,7)) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position="bottom",
+        axis.text=element_text(size=10),
+        strip.text=element_text(size=10),
+        legend.text=element_text(size=10),
+        legend.title=element_text(size=10),
+        legend.key.size=unit(1,"cm"),
+        panel.background = element_rect(fill = "white")) +  
+  facet_wrap(~ wave) 
+
+figure7
+ggsave(here("output", "graphs", "Figure7.jpg"), plot=figure7, height = 5, units="in")
+```
+
+# Average support for redistribution and educational level, by country and year.
+
+```{r}
+# Agrupa por país, año y nivel educativo, luego calcula el promedio
+within_education <- lapop %>%
+  mutate(wave = as.numeric(paste0(wave))) %>% 
+  group_by(country, wave, education_r) %>%
+  summarise(avg_redistribution = mean(redistribution, na.rm = TRUE))
+
+figure8<-ggplot(within_education, aes(x = education_r, y = avg_redistribution)) +
+  geom_jitter(width = 0.2, size = 1.5, alpha = 0.8) + 
+  geom_text_repel(aes(label = country), size = 2.5, color = "black", show.legend = FALSE) +  # Agrega nombres de país en negro
+  labs(x = "Educational level", y = "Promedio de apoyo a la redistribución") + 
+  scale_y_continuous("Apoyo promedio a la redistribución", limits = c(4.5, 6.6), 
+                     breaks = c(4.5, 5, 5.5, 6, 6.5)) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position = "bottom",
+        axis.text = element_text(size = 10),
+        strip.text = element_text(size = 10),
+        panel.background = element_rect(fill = "white")) +
+  facet_wrap(~ wave)  # Facetas por año
+
+figure8
+ggsave(here("output", "graphs", "Figure8.jpg"), plot=figure8, height = 5, units="in")
+```
+
+```{r}
+figure8.2 <- ggplot(within_education, aes(x = wave, y = avg_redistribution, group = country)) +
+  geom_line(color = "black", size = 0.8, alpha = 0.5) +  # Conecta los puntos en negro
+  geom_jitter(width = 0.2, size = 1.5, alpha = 0.8, color = "black") + 
+  geom_text_repel(aes(label = country), size = 2.5, color = "black", show.legend = FALSE) +  # Agrega nombres de país en negro
+  labs(x = "Wave", y = "Promedio de apoyo a la redistribución") + 
+  scale_y_continuous("Apoyo promedio a la redistribución", limits = c(4.5, 6.6), 
+                     breaks = c(4.5, 5, 5.5, 6, 6.5)) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position = "none",  # Elimina la leyenda
+        axis.text = element_text(size = 10),
+        strip.text = element_text(size = 10),
+        panel.background = element_rect(fill = "white")) +
+  facet_wrap(~ education_r)  # Facetas por
+
+figure8.2
+```
+
+
+# Average support for redistribution and ideology, by country and year.
+
+```{r}
+# Agrupa por país, año y nivel educativo, luego calcula el promedio
+within_ideology <- lapop %>%
+  mutate(wave = as.numeric(paste0(wave))) %>% 
+  group_by(country, wave, ideology_f) %>%
+  summarise(avg_redistribution = mean(redistribution, na.rm = TRUE))
+
+figure9 <- ggplot(within_ideology, aes(x = ideology_f, y = avg_redistribution)) +
+  geom_jitter(width = 0.2, size = 1.5, alpha = 0.8) + 
+  geom_text_repel(aes(label = country), size = 2.5, color = "black", show.legend = FALSE) +  # Agrega nombres de país en negro
+  labs(x = "Ideology", y = "Promedio de apoyo a la redistribución") + 
+  scale_y_continuous("Apoyo promedio a la redistribución", limits = c(4.5, 6.6), 
+                     breaks = c(4.5, 5, 5.5, 6, 6.5)) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position = "bottom",
+        axis.text = element_text(size = 10),
+        strip.text = element_text(size = 10),
+        panel.background = element_rect(fill = "white")) +
+  facet_wrap(~ wave)  # Facetas por año
+
+figure9
+
+ggsave(here("output", "graphs", "Figure9.jpg"), plot=figure9, height = 5, units="in")
+```
+
+```{r}
+figure9.2 <- ggplot(within_ideology, aes(x = wave, y = avg_redistribution, group = country)) +
+  geom_line(color = "black", size = 0.8, alpha = 0.5) +  # Conecta los puntos en negro
+  geom_jitter(width = 0.2, size = 1.5, alpha = 0.8, color = "black") + 
+  geom_text_repel(aes(label = country), size = 2.5, color = "black", show.legend = FALSE) +  # Agrega nombres de país en negro
+  labs(x = "Wave", y = "Promedio de apoyo a la redistribución") + 
+  scale_y_continuous("Apoyo promedio a la redistribución", limits = c(4.5, 6.6), 
+                     breaks = c(4.5, 5, 5.5, 6, 6.5)) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position = "none",  # Elimina la leyenda
+        axis.text = element_text(size = 10),
+        strip.text = element_text(size = 10),
+        panel.background = element_rect(fill = "white")) +
+  facet_wrap(~ ideology_f)  # Facetas por
+
+figure9.2
+```
+
+
+# Average support for redistribution and income, by country and year.
+
+```{r}
+#Figure 10: Average support for redistribution and trust in institutions, by country and year (facet)
+figure10= ggplot(within, 
+            aes(x= age, y= redistribution, label=country)) +
+  geom_point(size = 1.5, alpha = 0.8) + 
+  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE) +
+  labs(x = "Age", y =  "Support for redistribution") + 
+  scale_color_grey(start=0.8, end=0.2, name="Wave") +  
+  scale_y_continuous( "Average support for redistribution", limits = c(4.5,6.6), 
+                     breaks = c(4.5,5, 5.5, 6, 6.5)) +
+#  scale_x_continuous("Income (decile", limits = c(1,7), 
+#                     breaks = c(2,4,6,8,10)) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position="bottom",
+        axis.text=element_text(size=10),
+        strip.text=element_text(size=10),
+        legend.text=element_text(size=10),
+        legend.title=element_text(size=10),
+        legend.key.size=unit(1,"cm"),
+        panel.background = element_rect(fill = "white")) +  
+  facet_wrap(~ wave) 
+
+figure10
+ggsave(here("output", "graphs", "Figure10.jpg"), plot=figure10, height = 5, units="in")
+```
+
+
+
+
+
+
 
 
