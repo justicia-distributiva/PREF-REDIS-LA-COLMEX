@@ -1,6 +1,9 @@
 
 # Datos, variables y métodos
 
+Propuesta de gráficos [acá](https://github.com/justicia-distributiva/pref-redis-la-colmex/tree/main/output/graphs)
+
+
 ## Datos
 
 

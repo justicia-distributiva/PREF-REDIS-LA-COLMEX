@@ -23,3 +23,7 @@ Los estudios específicos por país iluminan aún más las sutilezas de las pref
 ## Contexto y cambio de preferencias en América Latina
 {{< include antecedentes02.qmd >}}
 
+## Corrupción y preferencias redistributivas
+
+{{< include antecedentes03.qmd >}}
+
