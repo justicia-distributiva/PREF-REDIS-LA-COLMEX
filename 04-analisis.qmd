@@ -3,36 +3,36 @@
 
 *Preferencias redistributivas*
 
-![](output/graphs/figure3.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure3.jpg)
 
 ## Determinantes individuales
 
 ### Edad
 
-![](output/graphs/figure10.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure10.jpg)
 
 ### Nivel educacional
 
-![](output/graphs/figure8.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure8.jpg)
 
 ### Ideología política
 
-![](output/graphs/figure9.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure9.jpg)
 
 ## Determinantes nacionales
 
 ### Índice gini
 
-![](output/graphs/figure4.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure4.jpg)
 
 ### PIB per capita
 
-![](output/graphs/figure5.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure5.jpg)
 
 ### Confianza en instituciones
 
-![](output/graphs/figure7.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure7.jpg)
 
 ### Corrupción
 
-![](output/graphs/figure6.jpg)
+![](https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure6.jpg)
