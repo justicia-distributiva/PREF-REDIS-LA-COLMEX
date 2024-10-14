@@ -1,3 +1,38 @@
 
 # Resultados
 
+*Preferencias redistributivas*
+
+![](output/graphs/figure3.jpg)
+
+## Determinantes individuales
+
+### Edad
+
+![](output/graphs/figure10.jpg)
+
+### Nivel educacional
+
+![](output/graphs/figure8.jpg)
+
+### Ideología política
+
+![](output/graphs/figure9.jpg)
+
+## Determinantes nacionales
+
+### Índice gini
+
+![](output/graphs/figure4.jpg)
+
+### PIB per capita
+
+![](output/graphs/figure5.jpg)
+
+### Confianza en instituciones
+
+![](output/graphs/figure7.jpg)
+
+### Corrupción
+
+![](output/graphs/figure6.jpg)

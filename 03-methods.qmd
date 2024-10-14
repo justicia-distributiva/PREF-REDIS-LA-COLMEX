@@ -1,15 +1,21 @@
 
-# Datos, variables y métodos
+# Método
 
-Propuesta de gráficos [acá](https://github.com/justicia-distributiva/pref-redis-la-colmex/tree/main/output/graphs)
+La metodología propuesta para llevar a cabo esta investigación es de carácter cuantitativo con un énfasis descriptivo y exploratorio. Los datos a nivel individual provienen de la encuesta del Proyecto de Opinión Pública de América Latina (LAPOP) aplicada a hogares por los propios estados latinoamericanos. El estudio incluye una muestra estratificada en tres niveles, compuesta por: 152.608 individuos (nivel 1), anidados en 112 unidades de país por año (nivel 2), anidados en 17 países (nivel 3).
+
+La variable dependiente del estudio es el apoyo individual a la redistribución, medido en la pregunta: “El Estado [país correspondiente] debería implementar políticas firmes para reducir la desigualdad de ingresos entre ricos y pobres. ¿En qué medida está usted de acuerdo o en desacuerdo con esta afirmación?” Esta variable va de 1 (“muy en desacuerdo”) a 7 (“muy de acuerdo”).
+
+Las principales variables independientes a nivel individual por analizar son la edad, el nivel educacional (primaria, secundaria y terciaria) y la ideología política (derecha, centro, izquierda y no declarado).
+
+Además, el estudio considera cuatro variables nacionales: desigualdad económica, desarrollo económico, confianza en instituciones y percepción de corrupción. 
+
+La *desigualdad económica* se mide a través del coeficiente de GINI, que oscila entre valores de 0 (escenario de igualdad total donde todos los individuos tienen el mismo ingreso) y 1 (desigualdad total donde un individuo tiene todo el ingreso). Para mejorar su interpretación, la variable se multiplicó por un factor de 100, de modo que varía entre 0 y 100. En los casos en que no se contaba con la información para un año determinado, se decidió utilizar la información del año anterior al faltante. 
+
+El *desarrollo económico* se mide a través del Producto Interno Bruto (PIB) per cápita anual por objeto de gasto a precios constantes (2015) en miles de dólares. Este indicador también se presenta para cada unidad país-año.
+
+La *confianza en instituciones* se mide a partir de la media de confianza individual en distintas instituciones políticas (FFAA, policías, poder judicial, poder ejecutivo, congreso y partidos políticos). Cada una de estas instituciones se mide en una escala likert que va de 1 (“nada de confianza”) a 7 (“mucha confianza”).
+
+La *percepción de corrupción* proviene a partir del índice de "control de la corrupción" elaborado por el Banco mundial y que mide la percepción de la corrupción dentro de un país. Este indicador está medido en una escala de -2.5 (fuerte corrupción) a 2.5 (bajo nivel de corrupción), sin embargo, el indicador fue recodificado de modo que un valor más alto indica una mayor percepción de corrupción en el país.
 
 
-## Datos
 
-
-
-## Variables
-
-
-
-## Métodos
