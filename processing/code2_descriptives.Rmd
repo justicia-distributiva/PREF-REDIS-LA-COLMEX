@@ -451,6 +451,36 @@ las cifras informan de las preferencias redistributivas para todos los países s
         panel.background = element_rect(fill = "white")) +
   facet_wrap(~ wave)  # Facets por año
 
+# Agrupa por país y nivel educativo, luego calcula el promedio
+library(survey)
+# Paso 1: Definir el diseño de la encuesta con los ponderadores
+lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
+
+# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por país y nivel educativo
+lapop_grouped <- svyby(~redistribution, ~country + education_r, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
+
+# Renombrar las columnas de intervalos de confianza para facilidad de uso
+lapop_grouped <- lapop_grouped %>%
+  rename(avg_redistribution = redistribution,
+         lower_ci = ci_l,
+         upper_ci = ci_u)
+
+# Paso 3: Crear el gráfico con los promedios ponderados y los intervalos de confianza
+figure8<-ggplot(lapop_grouped, aes(x = avg_redistribution, y = country, color = education_r)) +
+  geom_point(size = 2, alpha = 0.8) +  # Puntos para el promedio
+  geom_errorbarh(aes(xmin = lower_ci, xmax = upper_ci), height = 0.2, alpha = 0.7) +  # Intervalos de confianza
+  labs(x = "Promedio de apoyo a la redistribución", y = "", color="Educación") +  # Etiquetas de los ejes
+  scale_x_continuous("Media de preferencias redistributivas", limits = c(1, 7), breaks = c(1, 2, 3, 4, 5, 6, 7)) +
+  scale_color_discrete(labels = c("Primaria", "Secundaria", "Terciaria")) +  # Personaliza los nombres de las etiquetas
+  theme_minimal() +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        strip.text = element_text(size = 12),
+        axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        legend.position = "top")  # Ajustes de estilo
+
+
+
 
 figure8
 ggsave(here("output", "graphs", "Figure8.jpg"), plot=figure8, height = 5, units="in")
