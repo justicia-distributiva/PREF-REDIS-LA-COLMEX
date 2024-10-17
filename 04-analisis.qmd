@@ -16,7 +16,7 @@ El @fig-pref-red muestra el cambio de las preferencias redistributivas en Améri
 
 ### Edad
 
-El @fig-edad-redis muestra la relación entre la media de edad y las preferencias redistributivas en América Latina a lo largo de varios años: 2008-2023. En cada panel se observa cómo cambia la media de preferencias redistributivas en función de la media de edad de los encuestados para distintos países en cada uno de esos años. Cada punto representa un país, y la línea de regresión sugiere la tendencia general de la relación entre estas dos variables.
+La @fig-edad-redis muestra la relación entre la media de edad y las preferencias redistributivas en América Latina a lo largo de varios años: 2008-2023. En cada panel se observa cómo cambia la media de preferencias redistributivas en función de la media de edad de los encuestados para distintos países en cada uno de esos años. Cada punto representa un país, y la línea de regresión sugiere la tendencia general de la relación entre estas dos variables.
 
 En la mayoría de los años (excepto 2012 y 2018), existe una correlación positiva moderada entre la media de edad y las preferencias redistributivas, es decir, a medida que la edad media de los encuestados en un país aumenta, también lo hace la media de apoyo a la redistribución. El coeficiente de correlación (R) varía en cada año, oscilando entre valores bajos, como 0.24 en 2012 y 2018, y valores más altos, como 0.54 en 2010 y 0.53 en 2016. Estos valores indican que, en algunos años, la relación entre la edad media y las preferencias redistributivas es más fuerte (2010, 2016), mientras que en otros es bastante débil (2012, 2018).
 
@@ -29,7 +29,7 @@ En la mayoría de los años (excepto 2012 y 2018), existe una correlación posit
 
 ### Índice gini
 
-El @fig-gini-redis muestra la relación entre el índice de Gini las preferencias redistributivas en América Latina para los años 2008-2023. Durante los primeros años (2008-2016), la correlación entre el índice de Gini y las preferencias redistributivas es mayormente negativa, aunque con diferentes magnitudes. Esto indica que en estos años, los países con mayor desigualdad tienden a mostrar menores niveles de apoyo a la redistribución. Por el contrario, en los años siguientes (2018-2023), la tendencia cambia, mostrando una correlación positiva aunque débil, lo que sugiere que en estos años, los países con mayores niveles de desigualdad comenzaron a mostrar un mayor apoyo a la redistribución.
+La @fig-gini-redis muestra la relación entre el índice de Gini las preferencias redistributivas en América Latina para los años 2008-2023. Durante los primeros años (2008-2016), la correlación entre el índice de Gini y las preferencias redistributivas es mayormente negativa, aunque con diferentes magnitudes. Esto indica que en estos años, los países con mayor desigualdad tienden a mostrar menores niveles de apoyo a la redistribución. Por el contrario, en los años siguientes (2018-2023), la tendencia cambia, mostrando una correlación positiva aunque débil, lo que sugiere que en estos años, los países con mayores niveles de desigualdad comenzaron a mostrar un mayor apoyo a la redistribución.
 
 ```{r gini-redis, echo=FALSE, fig.cap = "Cambio en la relación entre índice GINI y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-gini-redis
@@ -39,7 +39,7 @@ El @fig-gini-redis muestra la relación entre el índice de Gini las preferencia
 
 ### PIB per capita
 
-El @fig-pib-redis muestra la relación entre el PIB per cápita y las preferencias redistributivas en América Latina entre los años 2008-2023. En casi todos los años (excepto 2014), la relación entre el PIB per cápita y las preferencias redistributivas es positiva, lo que sugiere que los países con mayor nivel de desarrollo económico tienden a mostrar un mayor apoyo a la redistribución. Los coeficientes de correlación más altos se observan en 2010 (R = 0.68), 2018 (R = 0.61) y 2023 (R = 0.60), lo que indica que en estos años la relación entre el PIB per cápita y las preferencias redistributivas fue más relevante.
+La @fig-pib-redis muestra la relación entre el PIB per cápita y las preferencias redistributivas en América Latina entre los años 2008-2023. En casi todos los años (excepto 2014), la relación entre el PIB per cápita y las preferencias redistributivas es positiva, lo que sugiere que los países con mayor nivel de desarrollo económico tienden a mostrar un mayor apoyo a la redistribución. Los coeficientes de correlación más altos se observan en 2010 (R = 0.68), 2018 (R = 0.61) y 2023 (R = 0.60), lo que indica que en estos años la relación entre el PIB per cápita y las preferencias redistributivas fue más relevante.
 
 ```{r pib-redis, echo=FALSE, fig.cap = "Cambio en la relación entre PIB y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-pib-redis
@@ -67,11 +67,11 @@ La @fig-corr-redis muestra la relación entre la percepción de corrupción y la
 
 ## Análisis de regresión multinivel
 
-En la @tbl-multilevel se presente un análisis de regresión multinivel. Esta técnica se utiliza cuando los datos están organizados en diferentes niveles jerárquicos (o anidados). En este caso, tenemos datos sobre las preferencias redistributivas de invididuos en varios países de América Latina a lo largo del tiempo. De esta forma, cada nivel jerárquico permite capturar las diferencias dentro y entre los países, así como entre los diferentes años.
+En la @fig-multilevel se presentan los coeficientes de regresión de un análisis de regresión multinivel. Esta técnica se utiliza cuando los datos están organizados en diferentes niveles jerárquicos (o anidados). En este caso, tenemos datos sobre las preferencias redistributivas de invididuos en varios países de América Latina a lo largo del tiempo. De esta forma, cada nivel jerárquico permite capturar las diferencias dentro y entre los países, así como entre los diferentes años.
 
 ```{r multilevel, echo=FALSE, results='asis'}
-#| label: tbl-multilevel
-pacman::p_load(here, lme4, dplyr)
+#| label: fig-multilevel
+pacman::p_load(here, lme4, dplyr, sjPlot, ggplot2)
 load(here("Input", "Proc", "LAPOP_Final.RData"))
 
 #Rename variables
@@ -103,84 +103,51 @@ lapop = lapop %>%
          Income2 = Income*Income,
          Corrupcion = corruption)%>%
   mutate(across(where(haven::is.labelled), as.numeric))
-# Model 1. Only income
-model_1 = lmer(Redistribution ~ 1 + Income
-                + Year + (1 | CountryWave) 
-                + (1 | Country), data=lapop, weights=wt)
-
-# Model 2. Individual predictors 
-model_2 = lmer(Redistribution ~ 1 + Income + Male + Age  
-                + Political + SystemConfidence + Education 
-                + Year + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
-
-# Model 3. Individual predictors + GINI  + GDP
-model_3 = lmer(Redistribution ~ 1 + Income + Male + Age 
-                + Political + SystemConfidence + Education 
-                + GINI
-                + GDP + Year
-                + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
 
 # Model 4. Individual predictors + GINI + GDP (Income)
-model_4 = lmer(Redistribution ~ 1 + Income + Male + Age 
-                + Political + SystemConfidence + Education 
-                + GINI
-                + GDP + Year
-                + Corrupcion
+model_4 = lmer(Redistribution ~ 1 + Year+ Income + Male + Age + Education +
+                 Political + SystemConfidence + GINI + GDP + Corrupcion 
                 + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
 
-# Table 1: individual
-
-texreg::knitreg(list(model_1, model_2, model_3, model_4), digits = 3,
-                custom.note = "*** p < 0.001; ** p < 0.01; * p < 0.05.",
-                custom.coef.names = c("Intercepto",
-                                      "Ingreso",
-                                      "Año 2010",
-                                      "Año 2012",
-                                      "Año 2014",
-                                      "Año 2016",
-                                      "Año 2018",
-                                      "Año 2023",
-                                      "Hombre <br> <i>(Ref. Mujer)</i>",
-                                      "Edad",
-                                      "Centro",
-                                      "Izquierda",
-                                      "No se identifica",
-                                      "Confianza en instituciones",
-                                      "Secundaria",
-                                      "Terciaria",
-                                      "GINI",
-                                      "GDP",
-                                      "Corrupción"),
-                groups = list("Año (Ref.= Año 2008)" = 3:8,
-                  "Identificación política (Ref.= Derecha)" = 11:13,
-                  "Educación (Ref.= Primaria)" = 15:16
-                  ),
-                include.loglik = FALSE,
-                include.aic = FALSE,
-                custom.gof.names = c("BIC",
-                                     "Num. obs.",
-                                     "Num. groups: Año-país",
-                                     "Num. groups: País",
-                                     "Var: año-país (Intercepto)",
-                                     "Var: país (Intercepto)",
-                                     "Var: Residual"),
-               caption = paste("(\\#tab:multilevel)","Multilevel longitudinal models for the justification of inequality in education"),
-               center = TRUE,
-               caption.above = TRUE,
-               scalebox = 0.765,
-               float.pos = "!ht", 
-               booktabs = FALSE, 
-               use.packages = FALSE, 
-               include.rs = FALSE, 
-               include.rmse = FALSE,
-               include.ci = FALSE)
-
+plot_model(model_4, 
+           type = "est",   # Muestra los coeficientes estimados
+           show.values = TRUE,  # Muestra los valores de los coeficientes
+           show.p = TRUE,  # Muestra los niveles de significancia
+           title = "Coeficientes de regresión de preferencias redistributivas",
+           axis.labels = c("Corrupción", 
+                               "PBI",
+                               "GINI",
+                               "Confianza en instituciones",
+                               "No se identifica",
+                               "Izquierda", 
+                               "Centro (Ref. Derecha)", 
+                               "Terciaria", 
+                               "Secundaria (Ref. Primaria)", 
+                               "Edad",
+                               "Hombre (Ref. Mujer)", 
+                               "Ingreso",
+                               "Año 2023", 
+                               "Año 2018", 
+                               "Año 2016", 
+                               "Año 2014", 
+                               "Año 2012", 
+                               "Año 2010 (Ref. Año 2008)"),
+           grid = TRUE, 
+           value.offset = 0.4,  # Ajusta la posición del número de los coeficientes
+           dot.size = 1.5,  # Reduce el tamaño de los círculos
+           value.size = 3.5  # Reduce el tamaño de los números
+           ) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position = "bottom",
+        axis.text = element_text(size = 9),  # Ajusta el tamaño del texto del eje Y
+        strip.text = element_text(size = 9),
+        legend.text = element_text(size = 9),
+        legend.title = element_text(size = 9),
+        legend.key.size = unit(0.8, "cm"),  # Reduce el tamaño de la leyenda
+        panel.background = element_rect(fill = "white"))
 ```
 
-En la @tbl-multilevel se presentan cuadro modelos de regresión, donde cada uno va introduciendo distintas variables según su orden de relevancia. El modelo 1 incluye como predictores el año de aplicación de la encuesta y el ingreso de los encuestados. En este modelo, el coeficiente de ingreso es positivo e indica que, a medida que aumenta el ingreso de las personas, también lo hace su apoyo a la redistribución, con una relación que es estadísticamente sigificativa (p<0.01). En cuanto al tiempo, se presentan resultados mixtos: comparado con el 2008, el 2010 y el 2012 tienen un coeficiente positivo pero que no es estadísticamente significativo. Por el contrario, los años 2014, 2016, 2018 y 2023 presentan un coeficiente negativo (que se va haciendo más negativo en el tiempo), con una relación que es estadísticamente sigificativa (p<0.001).
+En la @fig-multilevel se presentan los coeficientes de regresión del análisis multinivel. En este modelo de regresión, viendo los coeficientes asociados al tiempo, se presentan resultados mixtos: comparado con el 2008, el 2010 y el 2012 tienen un coeficiente negativo pero que no es estadísticamente significativo. Por el contrario, los años 2014, 2016, 2018 y 2023 presentan un coeficiente negativo (que se va haciendo más negativo en el tiempo), con una relación que es estadísticamente sigificativa (p<0.001). En cuanto a los ingresos, el coeficiente de ingreso es positivo pero no es estadísticamente significativo.
 
-El modelo 2, además de incluir ingreso y años de la encuesta, incluye un set de variables relevantes a nivel individual. Primero, los hombres tienen un coeficiente positivo que indica que los hombres apoyan más la redistribución en comparación con las mujeres (p<0.01). Segundo, el coeficiente negativo de la edad indica que a medida que las personas envejecen, el apoyo a la distribución disminuye ligeramente. Tercero, en comparación con la gente de derecha, las personas de centro no tienen diferencias estadísticamente signicatva, mientras que las personas de izquierda y aquellas que no se identifican muestran un mayor apoyo a la redistribución (p<0.001). En cuanto a la confianza en instituciones, el coeficiente positivo indica que a mayor confianza en las instituciones, el apoyo a la redistribución también aumenta. Finalmente, en este modelo de incluye el nivel educativo, que representa que las personas con mayor nivel educativo (en comparación con quienes solo tienen educación primaria), tienen a preferir mayores preferencias.
+Siguiendo con el orden de los coeficientes, primero los hombres tienen un coeficiente positivo que indica que ellos apoyan más la redistribución en comparación con las mujeres (p<0.01). Segundo, el coeficiente negativo de la edad indica que a medida que las personas envejecen, el apoyo a la distribución disminuye ligeramente. Tercero, se incluye el nivel educativo, que representa que las personas con mayor nivel educativo (en comparación con quienes solo tienen educación primaria), tienden a preferir mayor redistribución. Cuarto, en comparación con la gente de derecha, las personas de centro no tienen diferencias estadísticamente signicatva, mientras que las personas de izquierda y aquellas que no se identifican muestran un mayor apoyo a la redistribución (p<0.001). En quinto lugar, el coeficiente de confianza en instituciones, es positivo que indica que a mayor confianza en las instituciones, el apoyo a la redistribución también aumenta. Finalmente, se incluyen también las variables a nivel nacional como índice Gini, PIB y corrupción, donde el índice GINI tiene un coeficiente negativo pero que no es estadisticamente negativo, el coeficiente positivo del PIB per cápita indica que el apoyo a la redistribución es mayor en estos países y el índice de corrupción tiene un coeficiente negativo, pero que no es estadísticamente significativo.
 
-En el modelo 3 se incluyen también las variables a nivel nacional como índice Gini y PIB. En este modelo, el índice GINI tiene un coeficiente negativo pero que no es estadisticamente negativo. Por otro lado, el coeficiente positivo del PIB per cápita indica que el apoyo a la redistribución es mayor en estos países.
-
-En el modelo 4, y de manera exploratoria, se agrega el índice de perpcepción de corrupción. En este modelo, el índice de corrupción tiene un coeficiente negativo, pero que no es estadísticamente significativo.

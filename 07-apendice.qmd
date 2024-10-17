@@ -1,0 +1,109 @@
+# Apéndice
+
+```{r multilevel, echo=FALSE, results='asis'}
+#| label: tbl-multilevel
+pacman::p_load(here, lme4, dplyr)
+load(here("Input", "Proc", "LAPOP_Final.RData"))
+
+#Rename variables
+lapop = lapop %>% 
+  mutate(Redistribution = redistribution,
+         Income = decile,
+         Male = male_f,
+         Age = age, 
+         Political = ideology_f, 
+         Left = left, 
+#         Married = married_f, 
+         SystemConfidence=sysconf, 
+#         Employment=employment_r, 
+         Education=education_r, 
+#         Urban=zone, 
+         Income_Decile=decile_f, 
+         GINI=gini,
+         GDP=gdp,
+         GINI_BE=gini_mean, 
+         GINI_WE=gini_dif, 
+         GDP_BE=gdp_mean, 
+         GDP_WE=gdp_dif,
+         Welfare = welfare,
+         Country = countryname,
+         CountryWave = country_wave,
+         Year = year,
+         Decile_d10 = decile_d10,
+         Decile_d1 = decile_d1,
+         Income2 = Income*Income,
+         Corrupcion = corruption)%>%
+  mutate(across(where(haven::is.labelled), as.numeric))
+# Model 1. Only income
+model_1 = lmer(Redistribution ~ 1 + Income
+                + Year + (1 | CountryWave) 
+                + (1 | Country), data=lapop, weights=wt)
+
+# Model 2. Individual predictors 
+model_2 = lmer(Redistribution ~ 1 + Income + Male + Age  
+                + Political + SystemConfidence + Education 
+                + Year + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
+
+# Model 3. Individual predictors + GINI  + GDP
+model_3 = lmer(Redistribution ~ 1 + Income + Male + Age 
+                + Political + SystemConfidence + Education 
+                + GINI
+                + GDP + Year
+                + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
+
+# Model 4. Individual predictors + GINI + GDP (Income)
+model_4 = lmer(Redistribution ~ 1 + Income + Male + Age 
+                + Political + SystemConfidence + Education 
+                + GINI
+                + GDP + Year
+                + Corrupcion
+                + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
+
+# Table 1: individual
+
+texreg::knitreg(list(model_1, model_2, model_3, model_4), digits = 3,
+                custom.note = "*** p < 0.001; ** p < 0.01; * p < 0.05.",
+                custom.coef.names = c("Intercepto",
+                                      "Ingreso",
+                                      "Año 2010",
+                                      "Año 2012",
+                                      "Año 2014",
+                                      "Año 2016",
+                                      "Año 2018",
+                                      "Año 2023",
+                                      "Hombre <br> <i>(Ref. Mujer)</i>",
+                                      "Edad",
+                                      "Centro",
+                                      "Izquierda",
+                                      "No se identifica",
+                                      "Confianza en instituciones",
+                                      "Secundaria",
+                                      "Terciaria",
+                                      "GINI",
+                                      "GDP",
+                                      "Corrupción"),
+                groups = list("Año (Ref.= Año 2008)" = 3:8,
+                  "Identificación política (Ref.= Derecha)" = 11:13,
+                  "Educación (Ref.= Primaria)" = 15:16
+                  ),
+                include.loglik = FALSE,
+                include.aic = FALSE,
+                custom.gof.names = c("BIC",
+                                     "Num. obs.",
+                                     "Num. groups: Año-país",
+                                     "Num. groups: País",
+                                     "Var: año-país (Intercepto)",
+                                     "Var: país (Intercepto)",
+                                     "Var: Residual"),
+               caption = paste("(\\#tab:multilevel)","Multilevel longitudinal models for the justification of inequality in education"),
+               center = TRUE,
+               caption.above = TRUE,
+               scalebox = 0.765,
+               float.pos = "!ht", 
+               booktabs = FALSE, 
+               use.packages = FALSE, 
+               include.rs = FALSE, 
+               include.rmse = FALSE,
+               include.ci = FALSE)
+
+```
