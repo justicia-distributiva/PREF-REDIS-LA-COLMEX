@@ -145,7 +145,41 @@ plot_model(model_4,
         legend.title = element_text(size = 9),
         legend.key.size = unit(0.8, "cm"),  # Reduce el tamaño de la leyenda
         panel.background = element_rect(fill = "white"))
+
+
+
 ```
+
+
+```{r}
+library(marginaleffects)
+plot_predictions(model = model_4,condition = "Education") +
+  scale_x_discrete(labels=c("Primaria o menos","Secundaria","Terciaria")) +
+  labs(x="Educación",y = "Preferencias redistributivas") +
+    theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position = "bottom",
+        axis.text = element_text(size = 9),  # Ajusta el tamaño del texto del eje Y
+        strip.text = element_text(size = 9),
+        legend.text = element_text(size = 9),
+        legend.title = element_text(size = 9),
+        legend.key.size = unit(0.8, "cm"),  # Reduce el tamaño de la leyenda
+        panel.background = element_rect(fill = "white"))
+
+plot_predictions(model = model_4,condition = "Political") +
+  geom_line()+
+  scale_x_discrete(labels=c("Derecha","Centro","Izquierda","No declarada")) +
+  labs(x="Posición política",y = "Preferencias redistributivas") +
+    theme(panel.grid.major = element_line(colour = "grey"),
+        legend.position = "bottom",
+        axis.text = element_text(size = 9),  # Ajusta el tamaño del texto del eje Y
+        strip.text = element_text(size = 9),
+        legend.text = element_text(size = 9),
+        legend.title = element_text(size = 9),
+        legend.key.size = unit(0.8, "cm"),  # Reduce el tamaño de la leyenda
+        panel.background = element_rect(fill = "white"))
+```
+
+
 
 En la @fig-multilevel se presentan los coeficientes de regresión del análisis multinivel. En este modelo de regresión, viendo los coeficientes asociados al tiempo, se presentan resultados mixtos: comparado con el 2008, el 2010 y el 2012 tienen un coeficiente negativo pero que no es estadísticamente significativo. Por el contrario, los años 2014, 2016, 2018 y 2023 presentan un coeficiente negativo (que se va haciendo más negativo en el tiempo), con una relación que es estadísticamente sigificativa (p<0.001). En cuanto a los ingresos, el coeficiente de ingreso es positivo pero no es estadísticamente significativo.
 
