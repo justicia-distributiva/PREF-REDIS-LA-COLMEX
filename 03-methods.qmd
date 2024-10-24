@@ -1,5 +1,5 @@
 
-# Método
+# Metodología
 
 La metodología propuesta para llevar a cabo esta investigación es de carácter cuantitativo con un énfasis descriptivo y exploratorio. Los datos a nivel individual provienen de la encuesta del Proyecto de Opinión Pública de América Latina (LAPOP) aplicada a hogares por los propios estados latinoamericanos. El estudio incluye una muestra estratificada en tres niveles, compuesta por: 152.608 individuos (nivel 1), anidados en 112 unidades de país por año (nivel 2), anidados en 17 países (nivel 3).
 
