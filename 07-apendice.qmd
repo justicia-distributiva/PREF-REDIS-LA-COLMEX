@@ -1,8 +1,9 @@
 # Apéndice
 
-```{r multilevel, echo=FALSE, results='asis'}
-#| label: tbl-multilevel
-pacman::p_load(here, lme4, dplyr)
+## Cantidad de casos por país
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+pacman::p_load(here, lme4, dplyr, kableExtra)
 load(here("Input", "Proc", "LAPOP_Final.RData"))
 
 #Rename variables
@@ -34,6 +35,48 @@ lapop = lapop %>%
          Income2 = Income*Income,
          Corrupcion = corruption)%>%
   mutate(across(where(haven::is.labelled), as.numeric))
+
+tabla_casos <- lapop %>%
+  group_by(country, year) %>%
+  summarise(cantidad_casos = n()) %>%
+  arrange(country, year)
+
+tabla_casos <- tabla_casos %>%
+  mutate(country = recode(country,
+                       "MEX" = "México",
+                       "GTM" = "Guatemala",
+                       "SLV" = "El Salvador",
+                       "HND" = "Honduras",
+                       "NIC" = "Nicaragua",
+                       "CRI" = "Costa Rica",
+                       "PAN" = "Panamá",
+                       "COL" = "Colombia",
+                       "ECU" = "Ecuador",
+                       "BOL" = "Bolivia",
+                       "PER" = "Perú",
+                       "PRY" = "Paraguay",
+                       "CHL" = "Chile",
+                       "URY" = "Uruguay",
+                       "BRA" = "Brasil",
+                       "VEN" = "Venezuela",
+                       "ARG" = "Argentina",
+                       "DOM" = "República Dominicana"))
+
+# Mostrar la tabla
+tabla_casos %>%
+  arrange(country, year) %>%  # Ordenar por país y año
+  kable("html", col.names = c("País", "Año", "Cantidad de Casos")) %>%
+  kable_styling() %>%
+  collapse_rows(columns = 1, valign = "middle")
+```
+
+
+
+## Tabla de regresión multinivel
+
+```{r multilevel, echo=FALSE, results='asis'}
+#| label: tbl-multilevel
+
 # Model 1. Only income
 model_1 = lmer(Redistribution ~ 1 + Income
                 + Year + (1 | CountryWave) 
