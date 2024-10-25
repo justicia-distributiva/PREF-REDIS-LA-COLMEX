@@ -76,6 +76,4 @@ and it was last rendered at {{< now >}}.
 
 {{< include 05-discussion.qmd >}}
 
-{{< include 06-conclusion.qmd >}}
-
 {{< include 07-apendice.qmd >}}

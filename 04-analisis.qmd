@@ -3,18 +3,47 @@
 
 *Preferencias redistributivas*
 
-El @fig-pref-red muestra el cambio de las preferencias redistributivas en América Latina desde 2008 hasta 2023. En términos generales, observamos que en la mayoría de los países, las respuestas se agrupan mayormente en las categorías más altas de la escala, lo que refleja una tendencia persistente hacia el apoyo a las políticas redistributivas. Sin embargo, a medida que avanzamos hacia los últimos años del análisis (2018 y 2023), se evidencia una disminución en la proporción de encuestados que se encuentran en los niveles más altos de acuerdo (categoría 7) en varios países. Esto sugiere que, si bien las preferencias redistributivas siguen siendo fuertes en la región, ha habido una moderación o un descenso en este apoyo en ciertos contextos.
+La @fig-pref-red muestra la media de las preferencias redistributivas en cada país considerando todos los años analizados. Destaca que si bien el rango de valores de cada país no varía demasiado (todos los países se encuentran entre 5 y 6), Bolivia y Honduras son los países con la menor media de preferencias redistributivas para el periodo 2008-2023, mientras que Chile y República Dominicana son los países con la media de preferencias redistributivas más alta para el periodo analizado. Considerando que ningún país se encuentra en promedio por debajo de 5, se puede indicar que existe un cierto consenso generalizado en América Latina sobre el papel que debería tener el Estado en la redistribución de recursos.
 
 
-```{r pref-red, echo=FALSE, fig.cap = "Cambio en las preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+```{r pref-red, echo=FALSE, fig.cap = "Media de preferencias redistributivas en América Latina para todos los años", fig.align='center'}
 #| label: fig-pref-red
+ knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure1.jpg")
+```
+
+la @fig-pref-red-anio muestra el panorama general de cómo han cambiado las preferencias redistributivas para cada país entre 2008 y 2023. Si bien cada línea representa a un país, donde cada uno tiene sus propias especificidades y tendencias, es posible evidenciar que en América Latina en su conjunto presenta una pequeña disminución, en promedio, en el apoyo a políticas redistributivas. Por ejemplo, Chile (que en la @fig-pref-red era el promedio más alto en este periodo) en 2008 comienza con un promedio sobre 6 y termina en 2023 con un promedio cercano a 5,4. Asimismo, existen casos más extremos como Paraguay, que en 2008 es el promedio más alto con un valor cercano a 6,5 y en 2023 es el promedio más bajo con un valor menor a 5.
+
+
+```{r pref-red--anio, echo=FALSE, fig.cap = "Media de preferencias redistributivas en América Latina para todos los años", fig.align='center'}
+#| label: fig-pref-red-anio
+ knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure2.jpg")
+```
+
+
+La @fig-change-pref muestra de forma más específica el cambio de las preferencias redistributivas en América Latina desde 2008 hasta 2023. En términos generales, observamos que en la mayoría de los países, las respuestas se agrupan mayormente en las categorías más altas de la escala, lo que refleja una tendencia persistente hacia el apoyo a las políticas redistributivas. Sin embargo, a medida que avanzamos hacia los últimos años del análisis (2018 y 2023), se evidencia una disminución en la proporción de encuestados que se encuentran en los niveles más altos de acuerdo (categoría 7) en varios países. Esto sugiere que, si bien las preferencias redistributivas siguen siendo fuertes en la región, ha habido una moderación o un descenso en este apoyo en ciertos contextos.
+
+
+```{r change-pref-red, echo=FALSE, fig.cap = "Cambio en las preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+#| label: fig-change-pref
  knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure3.jpg")
 ```
 
 
-## Determinantes individuales
+## Factores individuales asociados a las preferencias redistributivas
 
-### Edad
+### Interés propio
+
+*Estatus socioeconómico*
+
+```{r educ-redis, echo=FALSE, fig.cap = "Cambio en la relación entre educación y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+#| label: fig-educ-redis
+ knitr::include_graphics(path = here::here("output/graphs/Figure_ed.png"))
+```
+
+La @fig-educ-redis muestra la relación entre el nivel educativo y las preferencias redistributivas desglosado por año desde 2008 hasta 2023, con mediciones en intervalos de dos años entre 2008 y 2018, y una última medición en 2023. En términos generales, se observa una estabilidad en las preferencias redistributivas en los primeros años (2008-2014), con una ligera tendencia ascendente a medida que aumenta el nivel educativo. Sin embargo, a partir de 2016, el gráfico muestra un incremento más claro en las preferencias redistributivas entre quienes tienen educación secundaria y terciaria, en comparación con quienes solo tienen educación primaria. Este patrón parece mantenerse hasta 2023, aunque las diferencias tienden a suavizarse ligeramente en este último año. Adicionalmente, las diferencias entre niveles educativos, especialmente entre la educación secundaria y terciaria, son particularmente pronunciadas en los años posteriores a 2016. Así, la relación entre educación y preferencias redistributivas ha evolucionado con el tiempo, mostrando una mayor inclinación por la redistribución entre los más educados en los años recientes. Así, esta evidencia descriptiva muestra de que el nivel educativo está asociado con las actitudes hacia la redistribución, pero también muestra que esta relación ha cambiado a lo largo del tiempo, destacando una posible divergencia en los últimos años.
+
+
+*Edad*
 
 La @fig-edad-redis muestra la relación entre la media de edad y las preferencias redistributivas en América Latina a lo largo de varios años: 2008-2023. En cada panel se observa cómo cambia la media de preferencias redistributivas en función de la media de edad de los encuestados para distintos países en cada uno de esos años. Cada punto representa un país, y la línea de regresión sugiere la tendencia general de la relación entre estas dos variables.
 
@@ -25,17 +54,9 @@ En la mayoría de los años (excepto 2012 y 2018), existe una correlación posit
  knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure10.jpg")
 ```
 
+### Valores
 
-### Estatus socioeconómico
-
-```{r educ-redis, echo=FALSE, fig.cap = "Cambio en la relación entre educación y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
-#| label: fig-educ-redis
- knitr::include_graphics(path = here::here("output/graphs/Figure_ed.png"))
-```
-
-La @fig-educ-redis muestra la relación entre el nivel educativo y las preferencias redistributivas desglosado por año desde 2008 hasta 2023, con mediciones en intervalos de dos años entre 2008 y 2018, y una última medición en 2023. En términos generales, se observa una estabilidad en las preferencias redistributivas en los primeros años (2008-2014), con una ligera tendencia ascendente a medida que aumenta el nivel educativo. Sin embargo, a partir de 2016, el gráfico muestra un incremento más claro en las preferencias redistributivas entre quienes tienen educación secundaria y terciaria, en comparación con quienes solo tienen educación primaria. Este patrón parece mantenerse hasta 2023, aunque las diferencias tienden a suavizarse ligeramente en este último año. Adicionalmente, las diferencias entre niveles educativos, especialmente entre la educación secundaria y terciaria, son particularmente pronunciadas en los años posteriores a 2016. Así, la relación entre educación y preferencias redistributivas ha evolucionado con el tiempo, mostrando una mayor inclinación por la redistribución entre los más educados en los años recientes. Así, esta evidencia descriptiva muestra de que el nivel educativo está asociado con las actitudes hacia la redistribución, pero también muestra que esta relación ha cambiado a lo largo del tiempo, destacando una posible divergencia en los últimos años.
-
-### Posición política
+*Posición política*
 
 ```{r pol-redis, echo=FALSE, fig.cap = "Cambio en la relación entre posición política y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-pol-redis
@@ -44,28 +65,7 @@ La @fig-educ-redis muestra la relación entre el nivel educativo y las preferenc
 
 La @fig-pol-redis muestra que, a lo largo de los años, existe una tendencia general donde aquellos que se identifican con la izquierda muestran niveles consistentemente más altos de preferencias redistributivas en comparación con quienes se sitúan en la derecha. Sin embargo, las diferencias entre los grupos parecen ser relativamente moderadas en los primeros años (2008-2012), con una ligera variación en 2012, donde los encuestados de la izquierda y el centro muestran una leve disminución en sus preferencias redistributivas, mientras que las personas de derecha se mantienen estables. En los años posteriores (2016-2023), las preferencias redistributivas de los distintos grupos políticos se estabilizan, con un ligero aumento entre quienes se identifican con la izquierda y el centro, mientras que las personas de derecha muestran un patrón relativamente plano. En estos últimos años, la categoría "No declarada" también presenta un leve incremento en sus preferencias redistributivas, situándose más cerca de las actitudes de la izquierda. En conjunto, esta evidencia descriptiva sugiere que la posición política sigue siendo un predictor relevante de las actitudes redistributivas, con una clara tendencia a que quienes se identifican con la izquierda tengan actitudes más favorables hacia la redistribución, aunque las diferencias entre los grupos no parecen haber aumentado significativamente en los últimos años.
 
-## Determinantes nacionales
-
-### Desigualdad de ingresos
-
-La @fig-gini-redis muestra la relación entre el índice de Gini las preferencias redistributivas en América Latina para los años 2008-2023. Durante los primeros años (2008-2016), la correlación entre el índice de Gini y las preferencias redistributivas es mayormente negativa, aunque con diferentes magnitudes. Esto indica que en estos años, los países con mayor desigualdad tienden a mostrar menores niveles de apoyo a la redistribución. Por el contrario, en los años siguientes (2018-2023), la tendencia cambia, mostrando una correlación positiva aunque débil, lo que sugiere que en estos años, los países con mayores niveles de desigualdad comenzaron a mostrar un mayor apoyo a la redistribución.
-
-```{r gini-redis, echo=FALSE, fig.cap = "Cambio en la relación entre índice GINI y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
-#| label: fig-gini-redis
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure4.jpg")
-```
-
-
-### Producto Interno Bruto
-
-La @fig-pib-redis muestra la relación entre el Producto Interno Bruto (PIB) per cápita y las preferencias redistributivas en América Latina entre los años 2008-2023. En casi todos los años (excepto 2014), la relación entre el PIB per cápita y las preferencias redistributivas es positiva, lo que sugiere que los países con mayor nivel de desarrollo económico tienden a mostrar un mayor apoyo a la redistribución. Los coeficientes de correlación más altos se observan en 2010 (R = 0.68), 2018 (R = 0.61) y 2023 (R = 0.60), lo que indica que en estos años la relación entre el PIB per cápita y las preferencias redistributivas fue más relevante.
-
-```{r pib-redis, echo=FALSE, fig.cap = "Cambio en la relación entre PIB y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
-#| label: fig-pib-redis
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure5.jpg")
-```
-
-### Confianza en instituciones
+*Confianza en instituciones*
 
 La @fig-conf-redis muestra el cambio en la relación entre la confianza en instituciones y las preferencias redistributivas en América Latina entre los años 2008-2023. En la mayoría de los años, la relación entre confianza en las instituciones y preferencias redistributivas es muy débil o prácticamente inexistente, lo que se refleja en los bajos coeficientes de correlación (R). Esto sugiere que la confianza en las instituciones no es un factor determinante para las preferencias redistributivas en la mayoría de los países de América Latina durante los años analizados. Los únicos años en que se observa una correlación relativamente más fuerte es en 2012 (R=0.51) y 2023 (R=0.58), lo que indica que, en estos años, los países con mayor confianza en las instituciones tienden a mostrar un mayor apoyo a la redistribución.
 
@@ -75,7 +75,28 @@ La @fig-conf-redis muestra el cambio en la relación entre la confianza en insti
 ```
 
 
-### Percepción de corrupción
+## Determinantes nacionales
+
+*Desigualdad de ingresos*
+
+La @fig-gini-redis muestra la relación entre el índice de Gini las preferencias redistributivas en América Latina para los años 2008-2023. Durante los primeros años (2008-2016), la correlación entre el índice de Gini y las preferencias redistributivas es mayormente negativa, aunque con diferentes magnitudes. Esto indica que en estos años, los países con mayor desigualdad tienden a mostrar menores niveles de apoyo a la redistribución. Por el contrario, en los años siguientes (2018-2023), la tendencia cambia, mostrando una correlación positiva aunque débil, lo que sugiere que en estos años, los países con mayores niveles de desigualdad comenzaron a mostrar un mayor apoyo a la redistribución.
+
+```{r gini-redis, echo=FALSE, fig.cap = "Cambio en la relación entre índice GINI y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+#| label: fig-gini-redis
+ knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure4.jpg")
+```
+
+
+*Producto Interno Bruto*
+
+La @fig-pib-redis muestra la relación entre el Producto Interno Bruto (PIB) per cápita y las preferencias redistributivas en América Latina entre los años 2008-2023. En casi todos los años (excepto 2014), la relación entre el PIB per cápita y las preferencias redistributivas es positiva, lo que sugiere que los países con mayor nivel de desarrollo económico tienden a mostrar un mayor apoyo a la redistribución. Los coeficientes de correlación más altos se observan en 2010 (R = 0.68), 2018 (R = 0.61) y 2023 (R = 0.60), lo que indica que en estos años la relación entre el PIB per cápita y las preferencias redistributivas fue más relevante.
+
+```{r pib-redis, echo=FALSE, fig.cap = "Cambio en la relación entre PIB y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+#| label: fig-pib-redis
+ knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure5.jpg")
+```
+
+*Percepción de corrupción*
 
 La @fig-corr-redis muestra la relación entre la percepción de corrupción y las preferencias redistributivas en América Latina entre 2008 y 2023. En todos los años analizados, la relación entre la percepción de corrupción y las preferencias redistributivas es negativa, lo que sugiere que en los países donde la percepción de corrupción es más alta, el apoyo a las políticas redistributivas tiende a ser más bajo. Esta correlación negativa es más fuerte en algunos años que en otros, pero se mantiene constante a lo largo del tiempo. Los años 2010, 2016 y 2023 destacan por tener coeficientes de correlación más negativos (R = -0.61, -0.60, -0.52, respectivamente), lo que sugiere una relación más marcada entre mayores niveles de corrupción percibida y un menor apoyo a la redistribución.
 
