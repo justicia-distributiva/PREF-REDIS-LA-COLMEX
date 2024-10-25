@@ -130,7 +130,7 @@ figure1<-ggplot(redistribution_avg_country, aes(x = reorder(country, promedio_re
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas para mejor legibilidad
 figure1
 
-ggsave(here("output", "graphs", "Figure1.jpg"), plot=figure1, height = 4, units="in")
+ggsave(here("output", "graphs", "Figure1.jpg"), plot=figure1, height = 3.5, units="in")
 ```
 
 ```{r}
@@ -209,7 +209,7 @@ figure2<-ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion, g
 
 
 figure2
-ggsave(here("output", "graphs", "Figure2.jpg"), plot=figure2,height = 4, units="in")
+ggsave(here("output", "graphs", "Figure2.jpg"), plot=figure2,height = 3.5, units="in")
 ```
 
 
@@ -438,7 +438,7 @@ las cifras informan de las medias de los países en preferencias redistributivas
            hjust = 1, vjust = -0.7)
 
 figure4
-ggsave(here("output", "graphs", "Figure4.jpg"), plot=figure4, height = 5, units="in")
+ggsave(here("output", "graphs", "Figure4.jpg"), plot=figure4, height = 4, units="in")
 
 ```
 
@@ -474,7 +474,7 @@ las cifras informan de las medias de los países en preferencias redistributivas
            hjust = 1, vjust = -0.7)
 
 figure5
-ggsave(here("output", "graphs", "Figure5.jpg"), plot=figure5, height = 5, units="in")
+ggsave(here("output", "graphs", "Figure5.jpg"), plot=figure5, height = 4, units="in")
 
 #Detach package conflicted
 #detach("package:conflicted", unload = TRUE)
@@ -516,7 +516,7 @@ las cifras informan de las medias de los países en preferencias redistributivas
            hjust = 1, vjust = -0.7)
 
 figure6
-ggsave(here("output", "graphs", "Figure6.jpg"), plot=figure6, height = 5, units="in")
+ggsave(here("output", "graphs", "Figure6.jpg"), plot=figure6, height = 4, units="in")
 ```
 
 
@@ -552,7 +552,7 @@ Alta")) +
            hjust = 1, vjust = -0.7)
 
 figure7
-ggsave(here("output", "graphs", "Figure7.jpg"), plot=figure7, height = 5, units="in")
+ggsave(here("output", "graphs", "Figure7.jpg"), plot=figure7, height = 4, units="in")
 ```
 
 # Average support for redistribution and educational level, by country and year.
@@ -665,7 +665,7 @@ las cifras informan de las medias de preferencias redistributivas por país seg�
            hjust = 1, vjust = -0.7)
 
 figure10
-ggsave(here("output", "graphs", "Figure10.jpg"), plot=figure10, height = 5, units="in")
+ggsave(here("output", "graphs", "Figure10.jpg"), plot=figure10, height = 4, units="in")
 ```
 
 

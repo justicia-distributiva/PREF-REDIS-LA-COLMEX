@@ -11,7 +11,7 @@ La @fig-pref-red muestra la media de las preferencias redistributivas en cada pa
  knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure1.jpg")
 ```
 
-la @fig-pref-red-anio muestra el panorama general de cómo han cambiado las preferencias redistributivas para cada país entre 2008 y 2023. Si bien cada línea representa a un país, donde cada uno tiene sus propias especificidades y tendencias, es posible evidenciar que en América Latina en su conjunto presenta una pequeña disminución, en promedio, en el apoyo a políticas redistributivas. Por ejemplo, Chile (que en la @fig-pref-red era el promedio más alto en este periodo) en 2008 comienza con un promedio sobre 6 y termina en 2023 con un promedio cercano a 5,4. Asimismo, existen casos más extremos como Paraguay, que en 2008 es el promedio más alto con un valor cercano a 6,5 y en 2023 es el promedio más bajo con un valor menor a 5.
+la @fig-pref-red-anio muestra el panorama general de cómo han cambiado las preferencias redistributivas para cada país entre 2008 y 2023. Si bien cada línea representa a un país, donde cada uno tiene sus propias especificidades y tendencias, es posible evidenciar que en América Latina en su conjunto presenta una pequeña disminución, en promedio, en el apoyo a políticas redistributivas. Por ejemplo, Chile (que en la @fig-pref-red era el promedio más alto en este periodo) en 2008 comienza con un promedio sobre 6 y termina en 2023 con un promedio cercano a 5,4. Asimismo, existen casos más extremos como Paraguay, que en 2008 es el promedio más alto con un valor cercano a 6,5 y en 2023 es uno de los promedios más bajos con un valor menor a 5.
 
 
 ```{r pref-red--anio, echo=FALSE, fig.cap = "Media de preferencias redistributivas en América Latina para todos los años", fig.align='center'}
@@ -252,7 +252,7 @@ las cifras informan de las medias de preferencias redistributivas según nivel e
         panel.background = element_rect(fill = "white"))
 
 ggsave(plot = plot_educ,path = here::here("output/graphs"),
-       filename = "Figure_ed.png",scale = 15,width = 1.5,height = 1,device = "png",units = "cm")
+       filename = "Figure_ed.png",height = 3.5, units="in")
 
 
 model_4 = lmer(Redistribution ~ 1 + Year+ Income + Male + Age + Education   +
@@ -283,7 +283,7 @@ las cifras informan de las medias de preferencias redistributivas según posici�
         panel.background = element_rect(fill = "white"))
 
 ggsave(plot = plot_polit,path = here::here("output/graphs"),
-       filename = "Figure_pol.png",scale = 15,width = 1.5,height = 1,device = "png",units = "cm")
+       filename = "Figure_pol.png",height = 3.5, units="in")
 ```
 
 

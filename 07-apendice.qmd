@@ -6,7 +6,7 @@
 pacman::p_load(here, lme4, dplyr, kableExtra)
 load(here("Input", "Proc", "LAPOP_Final.RData"))
 
-#Rename variables
+# Renombrar variables
 lapop = lapop %>% 
   mutate(Redistribution = redistribution,
          Income = decile,
@@ -14,26 +14,23 @@ lapop = lapop %>%
          Age = age, 
          Political = ideology_f, 
          Left = left, 
-#         Married = married_f, 
-         SystemConfidence=sysconf, 
-#         Employment=employment_r, 
-         Education=education_r, 
-#         Urban=zone, 
-         Income_Decile=decile_f, 
-         GINI=gini,
-         GDP=gdp,
-         GINI_BE=gini_mean, 
-         GINI_WE=gini_dif, 
-         GDP_BE=gdp_mean, 
-         GDP_WE=gdp_dif,
+         SystemConfidence = sysconf, 
+         Education = education_r, 
+         Income_Decile = decile_f, 
+         GINI = gini,
+         GDP = gdp,
+         GINI_BE = gini_mean, 
+         GINI_WE = gini_dif, 
+         GDP_BE = gdp_mean, 
+         GDP_WE = gdp_dif,
          Welfare = welfare,
          Country = countryname,
          CountryWave = country_wave,
          Year = year,
          Decile_d10 = decile_d10,
          Decile_d1 = decile_d1,
-         Income2 = Income*Income,
-         Corrupcion = corruption)%>%
+         Income2 = Income * Income,
+         Corrupcion = corruption) %>%
   mutate(across(where(haven::is.labelled), as.numeric))
 
 tabla_casos <- lapop %>%
@@ -43,34 +40,32 @@ tabla_casos <- lapop %>%
 
 tabla_casos <- tabla_casos %>%
   mutate(country = recode(country,
-                       "MEX" = "México",
-                       "GTM" = "Guatemala",
-                       "SLV" = "El Salvador",
-                       "HND" = "Honduras",
-                       "NIC" = "Nicaragua",
-                       "CRI" = "Costa Rica",
-                       "PAN" = "Panamá",
-                       "COL" = "Colombia",
-                       "ECU" = "Ecuador",
-                       "BOL" = "Bolivia",
-                       "PER" = "Perú",
-                       "PRY" = "Paraguay",
-                       "CHL" = "Chile",
-                       "URY" = "Uruguay",
-                       "BRA" = "Brasil",
-                       "VEN" = "Venezuela",
-                       "ARG" = "Argentina",
-                       "DOM" = "República Dominicana"))
+                          "MEX" = "México",
+                          "GTM" = "Guatemala",
+                          "SLV" = "El Salvador",
+                          "HND" = "Honduras",
+                          "NIC" = "Nicaragua",
+                          "CRI" = "Costa Rica",
+                          "PAN" = "Panamá",
+                          "COL" = "Colombia",
+                          "ECU" = "Ecuador",
+                          "BOL" = "Bolivia",
+                          "PER" = "Perú",
+                          "PRY" = "Paraguay",
+                          "CHL" = "Chile",
+                          "URY" = "Uruguay",
+                          "BRA" = "Brasil",
+                          "VEN" = "Venezuela",
+                          "ARG" = "Argentina",
+                          "DOM" = "República Dominicana"))
 
-# Mostrar la tabla
+# Mostrar la tabla para PDF
 tabla_casos %>%
   arrange(country, year) %>%  # Ordenar por país y año
-  kable("html", col.names = c("País", "Año", "Cantidad de Casos")) %>%
-  kable_styling() %>%
+  kable("latex", booktabs = TRUE, longtable = TRUE, col.names = c("País", "Año", "Cantidad de Casos")) %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header")) %>%
   collapse_rows(columns = 1, valign = "middle")
 ```
-
-
 
 ## Tabla de regresión multinivel
 
@@ -104,49 +99,50 @@ model_4 = lmer(Redistribution ~ 1 + Income + Male + Age
 
 # Table 1: individual
 
-texreg::knitreg(list(model_1, model_2, model_3, model_4), digits = 3,
-                custom.note = "*** p < 0.001; ** p < 0.01; * p < 0.05.",
-                custom.coef.names = c("Intercepto",
-                                      "Ingreso",
-                                      "Año 2010",
-                                      "Año 2012",
-                                      "Año 2014",
-                                      "Año 2016",
-                                      "Año 2018",
-                                      "Año 2023",
-                                      "Hombre <br> <i>(Ref. Mujer)</i>",
-                                      "Edad",
-                                      "Centro",
-                                      "Izquierda",
-                                      "No se identifica",
-                                      "Confianza en instituciones",
-                                      "Secundaria",
-                                      "Terciaria",
-                                      "GINI",
-                                      "GDP",
-                                      "Corrupción"),
-                groups = list("Año (Ref.= Año 2008)" = 3:8,
-                  "Identificación política (Ref.= Derecha)" = 11:13,
-                  "Educación (Ref.= Primaria)" = 15:16
-                  ),
-                include.loglik = FALSE,
-                include.aic = FALSE,
-                custom.gof.names = c("BIC",
-                                     "Num. obs.",
-                                     "Num. groups: Año-país",
-                                     "Num. groups: País",
-                                     "Var: año-país (Intercepto)",
-                                     "Var: país (Intercepto)",
-                                     "Var: Residual"),
-               caption = paste("(\\#tab:multilevel)","Multilevel longitudinal models for the justification of inequality in education"),
-               center = TRUE,
-               caption.above = TRUE,
-               scalebox = 0.765,
-               float.pos = "!ht", 
-               booktabs = FALSE, 
-               use.packages = FALSE, 
-               include.rs = FALSE, 
-               include.rmse = FALSE,
-               include.ci = FALSE)
+texreg::texreg(
+  list(model_1, model_2, model_3, model_4),
+  digits = 3,
+  custom.note = "*** p < 0.001; ** p < 0.01; * p < 0.05.",
+  custom.coef.names = c("Intercepto",
+                        "Ingreso",
+                        "Año 2010",
+                        "Año 2012",
+                        "Año 2014",
+                        "Año 2016",
+                        "Año 2018",
+                        "Año 2023",
+                        "Hombre \\textit{(Ref. Mujer)}",
+                        "Edad",
+                        "Centro",
+                        "Izquierda",
+                        "No se identifica",
+                        "Confianza en instituciones",
+                        "Secundaria",
+                        "Terciaria",
+                        "GINI",
+                        "GDP",
+                        "Corrupción"),
+  groups = list("Año (Ref.= Año 2008)" = 3:8,
+                "Identificación política (Ref.= Derecha)" = 11:13,
+                "Educación (Ref.= Primaria)" = 15:16),
+  include.loglik = FALSE,
+  include.aic = FALSE,
+  custom.gof.names = c("BIC",
+                       "Num. obs.",
+                       "Num. groups: Año-país",
+                       "Num. groups: País",
+                       "Var: año-país (Intercepto)",
+                       "Var: país (Intercepto)",
+                       "Var: Residual"),
+  center = TRUE,
+  caption.above = TRUE,
+  caption = "Tabla de regresión multinivel longitudinal",
+  scalebox = 0.9,  # Ajuste del tamaño de la tabla
+  booktabs = TRUE,  # Mejor formato para las tablas
+  use.packages = FALSE,
+  include.rs = FALSE, 
+  include.rmse = FALSE,
+  include.ci = FALSE
+)
 
 ```
