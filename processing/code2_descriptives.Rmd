@@ -16,7 +16,7 @@ output:
 #Install and load packages
 pacman::p_load(tidyverse, countrycode, car, zoo, wbstats, Hmisc, stargazer, stats,
        ggthemes, data.table, reshape2, scales, xtable, ggrepel, lme4, here, conflicted,
-       texreg, ggpubr)
+       texreg, ggpubr, tidytext)
 
 #Packages conflicts
 conflict_prefer("select", "dplyr")
@@ -91,9 +91,132 @@ prop.table(table(country_vars$welfare))
 
 ```
 
+# Preferencias redistributivas por año y país
+
+```{r}
+redistribution_avg_country <- lapop %>%
+  group_by(country) %>%
+  summarise(promedio_redistribucion = mean(redistribution, na.rm = TRUE))
+
+redistribution_avg_country <- redistribution_avg_country %>%
+  mutate(country = dplyr::recode(country,
+                          "MEX" = "México",
+                          "GTM" = "Guatemala",
+                          "SLV" = "El Salvador",
+                          "HND" = "Honduras",
+                          "NIC" = "Nicaragua",
+                          "CRI" = "Costa Rica",
+                          "PAN" = "Panamá",
+                          "COL" = "Colombia",
+                          "ECU" = "Ecuador",
+                          "BOL" = "Bolivia",
+                          "PER" = "Perú",
+                          "PRY" = "Paraguay",
+                          "CHL" = "Chile",
+                          "URY" = "Uruguay",
+                          "BRA" = "Brasil",
+                          "VEN" = "Venezuela",
+                          "ARG" = "Argentina",
+                          "DOM" = "República Dominicana"))
+
+# Gráfico de puntos comparando el promedio de redistribución por país
+figure1<-ggplot(redistribution_avg_country, aes(x = reorder(country, promedio_redistribucion), y = promedio_redistribucion)) +
+  geom_point(size = 2.5, color = "black") +  # Puntos más grandes y color ajustado
+  scale_y_continuous("Media de preferencias redistributivas", limits = c(1, 7), 
+                     breaks = c(1, 2, 3, 4, 5, 6, 7)) +
+  labs(x = "País"
+       ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas para mejor legibilidad
+figure1
+
+ggsave(here("output", "graphs", "Figure1.jpg"), plot=figure1, height = 4, units="in")
+```
+
+```{r}
+# Calcular el promedio de la variable Redistribución por país y año
+redistribution_avg <- lapop %>%
+  group_by(country, year) %>%
+  summarise(promedio_redistribucion = mean(redistribution, na.rm = TRUE))
+# Asegurarse de que la variable 'year' sea numérica
+redistribution_avg <- redistribution_avg %>%
+  mutate(year = as.numeric(as.character(year)))
+
+# Reemplazar los códigos de país por los nombres completos
+redistribution_avg <- redistribution_avg %>%
+  mutate(country = dplyr::recode(country,
+                          "MEX" = "México",
+                          "GTM" = "Guatemala",
+                          "SLV" = "El Salvador",
+                          "HND" = "Honduras",
+                          "NIC" = "Nicaragua",
+                          "CRI" = "Costa Rica",
+                          "PAN" = "Panamá",
+                          "COL" = "Colombia",
+                          "ECU" = "Ecuador",
+                          "BOL" = "Bolivia",
+                          "PER" = "Perú",
+                          "PRY" = "Paraguay",
+                          "CHL" = "Chile",
+                          "URY" = "Uruguay",
+                          "BRA" = "Brasil",
+                          "VEN" = "Venezuela",
+                          "ARG" = "Argentina",
+                          "DOM" = "República Dominicana"))
+
+# Eliminar Nicaragua y Guatemala del conjunto de datos
+redistribution_avg <- redistribution_avg %>%
+  filter(!country %in% c("Nicaragua", "Guatemala"))
+
+line_types <- c("Argentina" = "solid", 
+                "Bolivia" = "dotted", 
+                "Brasil" = "dashed", 
+                "Chile" = "dotdash", 
+                "Colombia" = "twodash", 
+                "Costa Rica" = "longdash", 
+                "República Dominicana" = "solid", 
+                "Ecuador" = "dashed", 
+                "Honduras" = "dotted", 
+                "México" = "dotdash", 
+                "Panamá" = "twodash", 
+                "Perú" = "longdash", 
+                "Paraguay" = "solid", 
+                "El Salvador" = "dashed", 
+                "Uruguay" = "twodash")
+
+# Crear un gráfico de líneas con etiquetas alineadas al final de cada línea
+figure2<-ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion, group = country)) +
+  geom_line(aes(linetype = country), size = 1, na.rm = TRUE) +  # Diferenciar por tipo de línea
+  scale_linetype_manual(values = line_types) +  # Asignar manualmente los tipos de línea
+  geom_label_repel(data = redistribution_avg %>% 
+                     group_by(country) %>% 
+                     filter(year == max(year, na.rm = TRUE)), 
+                   aes(label = country), 
+                   nudge_x = 0.8, 
+                   size = 3, 
+                   segment.color = "grey50", 
+                   segment.size = 0.5, 
+                   force = 2, 
+                   max.overlaps = 15) +  # Etiquetas de los países con líneas que conectan
+  labs(x = "Año",
+       y = "Media de Preferencias Redistributivas") +
+  theme_minimal() +
+  theme(legend.position = "none") +  # Eliminar la leyenda
+  scale_x_continuous(breaks = seq(min(redistribution_avg$year), max(redistribution_avg$year), by = 2), 
+                     expand = expansion(mult = c(0.05, 0.1)))  # Expandir el espacio en el eje X para las etiquetas
+
+
+
+
+figure2
+ggsave(here("output", "graphs", "Figure2.jpg"), plot=figure2, height = 8, width = 12, units="in")
+```
+
+
+
 # Support for redistribution by countries. Percentage by category.
 
-```{r Figure 2, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Figure 2, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 
 #Figure 2: Support for redistribution by countries. Percentage by category.
 redist = xtabs(~countryname+redistribution, data = lapop)
