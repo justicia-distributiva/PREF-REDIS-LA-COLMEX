@@ -209,7 +209,7 @@ figure2<-ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion, g
 
 
 figure2
-ggsave(here("output", "graphs", "Figure2.jpg"), plot=figure2, height = 8, width = 12, units="in")
+ggsave(here("output", "graphs", "Figure2.jpg"), plot=figure2,height = 4, units="in")
 ```
 
 
