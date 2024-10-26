@@ -16,7 +16,7 @@ output:
 #Install and load packages
 pacman::p_load(tidyverse, countrycode, car, zoo, wbstats, Hmisc, stargazer, stats,
        ggthemes, data.table, reshape2, scales, xtable, ggrepel, lme4, here, conflicted,
-       texreg, ggpubr, tidytext)
+       texreg, ggpubr, tidytext, survey)
 
 #Packages conflicts
 conflict_prefer("select", "dplyr")
@@ -33,7 +33,7 @@ load(here("input", "proc", "LAPOP_Final.RData"))
 
 ```
 
-# Descriptive statistics 
+# Estadísticos descriptivos
 
 ```{r Table 1, echo=FALSE, message=FALSE, warning=FALSE}
 #New 
@@ -91,10 +91,13 @@ prop.table(table(country_vars$welfare))
 
 ```
 
-# Preferencias redistributivas por año y país
+# Generales
+
+## País
 
 ```{r}
 redistribution_avg_country <- lapop %>%
+  mutate(redistribution = as.numeric(haven::zap_labels(redistribution))) %>% 
   group_by(country) %>%
   summarise(promedio_redistribucion = mean(redistribution, na.rm = TRUE))
 
@@ -120,24 +123,37 @@ redistribution_avg_country <- redistribution_avg_country %>%
                           "DOM" = "República Dominicana"))
 
 # Gráfico de puntos comparando el promedio de redistribución por país
-figure1<-ggplot(redistribution_avg_country, aes(x = reorder(country, promedio_redistribucion), y = promedio_redistribucion)) +
-  geom_point(size = 2.5, color = "black") +  # Puntos más grandes y color ajustado
-  scale_y_continuous("Media de preferencias redistributivas", limits = c(1, 7), 
+figure1 <- ggplot(redistribution_avg_country, aes(x = reorder(country, promedio_redistribucion))) +
+  geom_rect(aes(xmin = as.numeric(reorder(country, promedio_redistribucion)) - 0.4, 
+                xmax = as.numeric(reorder(country, promedio_redistribucion)) + 0.4, 
+                ymin = 1, ymax = promedio_redistribucion), 
+            fill = "gray50", color = "gray50") +
+  geom_errorbar(aes(ymin = pmax(1, promedio_redistribucion - 0.2), 
+                    ymax = pmin(7, promedio_redistribucion + 0.2)), 
+                width = 0.1, color = "black") +
+  scale_y_continuous("Preferencias redistributivas", limits = c(1, 7), 
                      breaks = c(1, 2, 3, 4, 5, 6, 7)) +
-  labs(x = "País"
-       ) +
+  labs(x = "País") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas para mejor legibilidad
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
 figure1
 
 ggsave(here("output", "graphs", "Figure1.jpg"), plot=figure1, height = 3.5, units="in")
 ```
 
+## País y año
+
 ```{r}
 # Calcular el promedio de la variable Redistribución por país y año
 redistribution_avg <- lapop %>%
   group_by(country, year) %>%
-  summarise(promedio_redistribucion = mean(redistribution, na.rm = TRUE))
+  summarise(promedio_redistribucion = mean(redistribution, na.rm = TRUE)) %>% 
+  ungroup()
+
+
 # Asegurarse de que la variable 'year' sea numérica
 redistribution_avg <- redistribution_avg %>%
   mutate(year = as.numeric(as.character(year)))
@@ -184,91 +200,367 @@ line_types <- c("Argentina" = "solid",
                 "El Salvador" = "dashed", 
                 "Uruguay" = "twodash")
 
-# Crear un gráfico de líneas con etiquetas alineadas al final de cada línea
-figure2<-ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion, group = country)) +
-  geom_line(aes(linetype = country), size = 1, na.rm = TRUE) +  # Diferenciar por tipo de línea
-  scale_linetype_manual(values = line_types) +  # Asignar manualmente los tipos de línea
-  geom_label_repel(data = redistribution_avg %>% 
-                     group_by(country) %>% 
-                     filter(year == max(year, na.rm = TRUE)), 
-                   aes(label = country), 
-                   nudge_x = 0.8, 
-                   size = 3, 
-                   segment.color = "grey50", 
-                   segment.size = 0.5, 
-                   force = 2, 
-                   max.overlaps = 15) +  # Etiquetas de los países con líneas que conectan
+figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion, group = country)) +
+  geom_line(aes(linetype = country), size = 0.3, na.rm = TRUE) +  # Differentiate by line type
+  geom_point(size = 0.4) + 
+  scale_linetype_manual(values = line_types) +  # Manually assign line types
+  
+  # Right-side labels (end of each line) with rectangular style and no curved edges
+  geom_text_repel(data = redistribution_avg %>% 
+                    group_by(country) %>% 
+                    filter(year == max(year, na.rm = TRUE)), 
+                  aes(label = country), 
+                  nudge_x = 2.5,  
+                  hjust = 0,  # Align labels to the left side of the label box
+                  size = 2,  # Smaller text size to fit more labels
+                  color = "grey50",  # Text color for labels
+                  segment.color = "grey50", 
+                  segment.size = 0.3, 
+                  force = 10,  # Stronger repulsion force to fully utilize vertical space
+                  max.overlaps = Inf,  # Ensure all labels are shown
+                  direction = "y",  # Align labels vertically for a cleaner look
+                  box.padding = 0.1,  # Minimal padding to allow closer labels
+                  point.padding = 0.1,  # Minimal space from points
+                  min.segment.length = 0) +  # Ensure all segments are drawn
+
+  # Left-side labels (start of each line) with rectangular style and no curved edges
+  geom_text_repel(data = redistribution_avg %>% 
+                    group_by(country) %>% 
+                    filter(year == min(year, na.rm = TRUE)), 
+                  aes(label = country), 
+                  nudge_x = -2.5,  
+                  hjust = 1,  # Align labels to the right side of the label box
+                  size = 2,  # Smaller text size to fit more labels
+                  color = "grey50",  # Text color for labels
+                  segment.color = "grey50", 
+                  segment.size = 0.3, 
+                  force = 10,  # Stronger repulsion force to fully utilize vertical space
+                  max.overlaps = Inf,  # Ensure all labels are shown
+                  direction = "y",  # Align labels vertically for a cleaner look
+                  box.padding = 0.1,  # Minimal padding to allow closer labels
+                  point.padding = 0.1,  # Minimal space from points
+                  min.segment.length = 0) +  # Ensure all segments are drawn
+
   labs(x = "Año",
-       y = "Media de Preferencias Redistributivas") +
+       y = "Preferencias redistributivas") +
   theme_minimal() +
-  theme(legend.position = "none") +  # Eliminar la leyenda
-  scale_x_continuous(breaks = seq(min(redistribution_avg$year), max(redistribution_avg$year), by = 2), 
-                     expand = expansion(mult = c(0.05, 0.1)))  # Expandir el espacio en el eje X para las etiquetas
+  theme(legend.position = "none") +  # Remove the legend
+  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023), 
+                     expand = expansion(mult = 0.1555)) +  # Minimized expand on the right for closer labels
+  scale_y_continuous(limits = c(4.5, 6.5))  # Set y-axis range from 4.5 to 6.5
 
-
-
+# Save the figure
+ggsave(here("output", "graphs", "Figure2.jpg"), plot = figure2, height = 3.5, units = "in")
 
 figure2
-ggsave(here("output", "graphs", "Figure2.jpg"), plot=figure2,height = 3.5, units="in")
+
 ```
 
 
+# Factores individuales
 
-# Support for redistribution by countries. Percentage by category.
+## Nivel educacional
 
-```{r Figure 2, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 
-#Figure 2: Support for redistribution by countries. Percentage by category.
-redist = xtabs(~countryname+redistribution, data = lapop)
-redist = prop.table(redist, 1)*100
-redist = as.data.frame(redist) %>% 
-  arrange(desc(redistribution), Freq) %>% 
-  mutate(countryname1 = case_when(countryname=="Bolivia" ~ 1,
-                                  countryname=="Peru" ~ 2,
-                                  countryname=="Guatemala" ~ 3,
-                                  countryname=="Ecuador" ~ 4,
-                                  countryname=="Honduras" ~ 5,
-                                  countryname=="El Salvador" ~ 6,
-                                  countryname=="Mexico" ~ 7,
-                                  countryname=="Colombia" ~ 8,
-                                  countryname=="Panama" ~  9,
-                                  countryname=="Brazil" ~ 10,
-                                  countryname=="Paraguay" ~ 11,
-                                  countryname=="Uruguay" ~ 12,
-                                  countryname=="Chile" ~ 13,
-                                  countryname=="Argentina" ~ 14,
-                                  countryname=="Costa Rica" ~ 15,
-                                  countryname=="Nicaragua" ~ 16,
-                                  countryname=="Dominican Republic" ~ 17)) %>% 
-  mutate(countryname1 = factor(countryname1,
-         levels = c(1:17),
-         labels = c("Bolivia", "Peru", "Guatemala", "Ecuador", "Honduras", "El Salvador", "Mexico",
-                    "Colombia", "Panama", "Brazil", "Paraguay", "Uruguay", "Chile", "Argentina", 
-                    "Costa Rica", "Nicaragua", "Dominican Republic")),
-         order = factor(countryname,
-         levels = c(1:17),
-         labels = c("Bolivia", "Peru", "Guatemala", "Ecuador", "Honduras", "El Salvador", "Mexico",
-                    "Colombia", "Panama", "Brazil", "Paraguay", "Uruguay", "Chile", "Argentina", 
-                    "Costa Rica", "Nicaragua", "Dominican Republic")))
+```{r}
 
-  figure2 = ggplot(data = redist, 
-                   aes(x=reorder(countryname1, order), y = Freq, 
-                       fill = factor(redistribution))) + 
-    geom_bar(stat = "identity", position = position_stack(reverse = TRUE)) + coord_flip() + labs(x = "", y = "", fill="") +
-    guides(fill = guide_legend(reverse = TRUE)) + 
-    scale_y_continuous(labels = function(Freq){paste0(Freq, "%")}) +
-    theme(panel.background = element_rect(fill = "white"), 
-          axis.text=element_text(size=10),
-          strip.text=element_text(size=12))  + 
-    scale_fill_grey(start=0.8, end=0.2, name = "", 
-                  labels = c("1 (Disagree)", "2", "3", "4", "5", "6", "7 (Agree)")) 
+# Lapop desagrupada
+lapop = lapop %>% ungroup()
 
-figure2
-ggsave(here("output", "graphs", "Figure2.jpg"), plot=figure2, height = 4, units="in")
+# Paso 1: Definir el diseño de la encuesta con los ponderadores
+lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
+
+# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
+lapop_grouped <- svyby(~redistribution, ~education_r + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
+
+# Renombrar las columnas de intervalos de confianza para facilidad de uso
+lapop_grouped <- lapop_grouped %>%
+  rename(avg_redistribution = redistribution,
+         lower_ci = ci_l,
+         upper_ci = ci_u) %>% 
+  mutate(year = as.numeric(paste0(year)),
+         education_r = case_when(education_r=="Primary" ~ "Primaria",
+                                 education_r=="Secondary" ~ "Secundaria",
+                                 education_r=="Tertiary" ~ "Terciaria"))
+
+
+# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
+figure8 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = education_r, group = education_r)) +
+  geom_line(size = 0.8, color = "black") +  # Líneas en negro
+  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = education_r), alpha = 0.2) +  # Bandas de confianza en gris
+  labs(x = "Año", y = "Preferencias redistributivas",
+       linetype = "Nivel educacional", fill = "Nivel educacional",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según nivel educacional y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
+  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
+  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
+  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
+  scale_linetype_manual(values = c("solid", "dashed", "dotted")) +  # Tipos de línea diferentes
+  theme_bw() +
+  theme(
+    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
+    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
+    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
+  )
+
+# Mostrar el gráfico
+print(figure8)
+
+ggsave(here("output", "graphs", "Figure8.jpg"), plot=figure8, height = 5, units="in")
 
 ```
 
-# Support for redistribution by country and year. Percentage by category.
+## Posición política
+
+```{r}
+# Paso 1: Definir el diseño de la encuesta con los ponderadores
+lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
+
+# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
+lapop_grouped <- svyby(~redistribution, ~ideology_f + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
+
+# Renombrar las columnas de intervalos de confianza para facilidad de uso
+lapop_grouped <- lapop_grouped %>%
+  rename(avg_redistribution = redistribution,
+         lower_ci = ci_l,
+         upper_ci = ci_u) %>% 
+  mutate(year = as.numeric(paste0(year)),
+         ideology_f = case_when(ideology_f=="Right" ~ "Derecha",
+                                 ideology_f=="Center" ~ "Centro",
+                                 ideology_f=="Left" ~ "Izquierda",
+                                 ideology_f=="Not declared" ~ "No declarada"
+                                ))
+
+
+
+
+# Verificar los niveles de ideology_f
+unique(lapop_grouped$ideology_f)
+
+# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
+figure9 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = ideology_f, group = ideology_f)) +
+  geom_line(size = 0.8, color = "black") +  # Líneas en negro
+  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = ideology_f), alpha = 0.2) +  # Bandas de confianza en gris
+  labs(x = "Año", y = "Preferencias redistributivas",
+       linetype = "Posición política", fill = "Posición política",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según posición política y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
+  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
+  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
+  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
+  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash")) +  # Tipos de línea diferentes
+  theme_bw() +
+  theme(
+    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
+    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
+    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
+  )
+
+# Mostrar el gráfico
+print(figure9)
+
+# Guardar el gráfico
+ggsave(here("output", "graphs", "Figure9.jpg"), plot = figure9, height = 5, units = "in")
+
+```
+
+## Edad
+
+```{r}
+# Grupos de edad
+lapop = lapop %>% 
+  mutate(age_group = case_when(age %in% c(18:29) ~ "18-29",
+                               age %in% c(30:44) ~ "30-44",
+                               age %in% c(45:59) ~ "45-59",
+                               age >=60 ~ "60 o más")) %>%
+  mutate(age_group = factor(age_group, levels = c("18-29", "30-44", "45-59", "60 o más")))
+
+# Paso 1: Definir el diseño de la encuesta con los ponderadores
+lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
+
+# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
+lapop_grouped <- svyby(~redistribution, ~age_group + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
+
+# Renombrar las columnas de intervalos de confianza para facilidad de uso
+lapop_grouped <- lapop_grouped %>%
+  rename(avg_redistribution = redistribution,
+         lower_ci = ci_l,
+         upper_ci = ci_u) %>% 
+    mutate(year = as.numeric(paste0(year)))
+
+# Verificar los niveles de age_group
+unique(lapop_grouped$age_group)
+
+# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
+figure10 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = age_group, group = age_group)) +
+  geom_line(size = 0.8, color = "black") +  # Líneas en negro
+  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = age_group), alpha = 0.2) +  # Bandas de confianza en gris
+  labs(x = "Año", y = "Preferencias redistributivas",
+       linetype = "Edad", fill = "Edad",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según edad y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
+  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
+  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
+  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
+  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash")) +  # Tipos de línea diferentes
+  theme_bw() +
+  theme(
+    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
+    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
+    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
+  )
+
+# Mostrar el gráfico
+print(figure10)
+
+# Guardar el gráfico
+ggsave(here("output", "graphs", "Figure10.jpg"), plot = figure10, height = 5, units = "in")
+
+```
+
+# Determinantes nacionales
+
+## Desigualdad
+
+```{r Figure 4, echo=FALSE, message=FALSE, warning=FALSE}
+
+#Within countries
+within = lapop %>%
+  mutate(wave = as.numeric(paste0(wave))) %>% 
+  group_by(country, wave) %>% 
+  summarise_all(mean, na.rm=TRUE) %>% 
+  ungroup()
+
+#Figure 4: Average support for redistribution and inequality, by country and year
+
+figure4 <- ggplot(within, 
+            aes(x = gini, y = redistribution, label = country)) +
+  geom_point(size = 0.8, alpha = 0.8) + 
+  stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE,
+                  color = "grey50", segment.color = "grey50") +
+  labs(x = "Desigualdad (Gini)", 
+       y = "Preferencias redistributivas",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas e índice de GINI, por país y año.", width = 120)) + 
+  scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
+  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
+  scale_x_continuous("GINI", limits = c(39, 60), 
+                     breaks = c(40, 45, 50, 55, 60)) +
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
+  facet_wrap(~ wave) +
+  stat_cor(aes(label = ..r.label..), method = "pearson", 
+           label.x.npc = "right", label.y.npc = "bottom", size = 2, 
+           hjust = 1, vjust = -0.7)
+
+figure4
+ggsave(here("output", "graphs", "Figure4.jpg"), plot = figure4, height = 5, units = "in")
+
+```
+
+## Desarrollo económica
+
+```{r Figure 5, echo=FALSE, message=FALSE, warning=FALSE}
+
+#Figure 5: Average support for redistribution and economic development, by country and year (facet)
+figure5= ggplot(within, 
+            aes(x= gdp, y= redistribution, label=country)) +
+  geom_point(size = 0.8, alpha = 0.8) + 
+  stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE,
+                  color = "grey50", segment.color = "grey50") +
+  labs(x = "Inequality", y =  "Support for redistribution",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y PIB per cápita, por país y año.", width = 120)) + 
+  scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
+  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
+  scale_x_continuous("PIB per capita", limits = c(0,16.1), 
+                     breaks = c(0,4,8,12,16)) +
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
+  facet_wrap(~ wave)  +
+  stat_cor(aes(label = ..r.label..), method = "pearson", 
+           label.x.npc = "right", label.y.npc = "bottom", size = 2, 
+           hjust = 1, vjust = -0.7)
+
+figure5
+ggsave(here("output", "graphs", "Figure5.jpg"), plot=figure5, height = 5, units="in")
+
+#Detach package conflicted
+#detach("package:conflicted", unload = TRUE)
+
+```
+
+## Percepción de corrupción
+
+```{r}
+summary(within$corruption)
+within$corruption_invert <- -within$corruption  # Invertir los valores de corrupción
+
+figure6 <- ggplot(within, 
+       aes(x = corruption_invert, y = redistribution, label = country)) +
+  geom_point(size = 0.8, alpha = 0.8) + 
+  stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE, max.overlaps = 20,
+                  color = "grey50", segment.color = "grey50") +
+  labs(x = "Corruption", y =  "Support for redistribution",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y percepción de corrupción, por país y año.", width = 120)) + 
+  scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
+  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
+  scale_x_continuous("Percepción de corrupción", 
+                     limits = c(-2.5, 2.5), 
+                     breaks = c(-2.5, 0, 2.5), 
+                     labels = c("Baja", "Media", "Alta")) +
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
+  facet_wrap(~ wave)  +
+  stat_cor(aes(label = ..r.label..), method = "pearson", 
+           label.x.npc = "right", label.y.npc = "bottom", size = 2, 
+           hjust = 1, vjust = -0.7)
+
+figure6
+ggsave(here("output", "graphs", "Figure6.jpg"), plot=figure6, height = 5, units="in")
+```
+## Confianza en instituciones
+
+```{r}
+#Figure 7: Average support for redistribution and trust in institutions, by country and year (facet)
+figure7= ggplot(within, 
+            aes(x= sysconf, y= redistribution, label=country)) +
+  geom_point(size = 0.8, alpha = 0.8) + 
+  stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label=country), size=2, show.legend = FALSE, max.overlaps = 30,
+                  color = "grey50", segment.color = "grey50") +
+  labs(x = "Inequality", y =  "Support for redistribution",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y confianza en instituciones, por país y año.", width = 120)) + 
+  scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
+  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
+    scale_x_continuous("Confianza en instituciones", limits = c(1,7), 
+                     breaks = c(1,2,3,4,5,6,7),
+                     labels=c("1 
+Baja", "2", "3", "4", "5", "6", "7 
+Alta")) +
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
+  facet_wrap(~ wave)  +
+  stat_cor(aes(label = ..r.label..), method = "pearson", 
+           label.x.npc = "right", label.y.npc = "bottom", size = 2, 
+           hjust = 1, vjust = -0.7)
+
+       
+
+figure7
+ggsave(here("output", "graphs", "Figure7.jpg"), plot=figure7, height = 5, units="in")
+```
+
+# Extras
+
+## Support for redistribution by country and year. Percentage by category.
 
 ```{r Figure 3, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -296,8 +588,7 @@ figure3
 ggsave(here("Output", "Graphs", "Figure3.jpg"), plot=figure3, height = 10, width = 9, units="in")
 
 ```
-
-# Average support for redistribution of income deciles, by country. {no deciles}
+## Average support for redistribution of income deciles, by country. {no deciles}
 
 ```{r Table 2, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -398,278 +689,6 @@ screenreg(m_income_ALL,
           custom.model.name = c("ALL"))
            
 ```
-
-# Average support for redistribution and GINI, by country and year.
-
-```{r Figure 4, echo=FALSE, message=FALSE, warning=FALSE}
-
-#Within countries
-within = lapop %>%
-  mutate(wave = as.numeric(paste0(wave))) %>% 
-  group_by(country, wave) %>% 
-  summarise_all(mean, na.rm=TRUE)
-
-#Figure 4: Average support for redistribution and inequality, by country and year
-
-figure4 <- ggplot(within, 
-            aes(x = gini, y = redistribution, label = country)) +
-  geom_point(size = 1.5, alpha = 0.8) + 
-  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
-  geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE) +
-  labs(x = "Desigualdad (Gini)", y =  "Preferencias redistributivas",
-       caption = "Fuente: LAPOP 2008-2023; estadísticas descriptivas ponderadas; 
-las cifras informan de las medias de los países en preferencias redistributivas según índice de GINI.") + 
-  scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
-  scale_y_continuous("Media de preferencias redistributivas", limits = c(1, 7), 
-                     breaks = c(1, 2, 3, 4, 5, 6, 7)) +
-  scale_x_continuous("GINI", limits = c(39, 60), 
-                     breaks = c(40, 45, 50, 55, 60)) +
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position = "bottom",
-        axis.text = element_text(size = 10),
-        strip.text = element_text(size = 10),
-        legend.text = element_text(size = 10),
-        legend.title = element_text(size = 10),
-        legend.key.size = unit(1, "cm"),
-        panel.background = element_rect(fill = "white")) +  
-  facet_wrap(~ wave) +
-  stat_cor(aes(label = ..r.label..), method = "pearson", 
-           label.x.npc = "right", label.y.npc = "bottom", size = 3, 
-           hjust = 1, vjust = -0.7)
-
-figure4
-ggsave(here("output", "graphs", "Figure4.jpg"), plot=figure4, height = 4, units="in")
-
-```
-
-# Average support for redistribution and GDP per capita, by country and year.
-
-```{r Figure 5, echo=FALSE, message=FALSE, warning=FALSE}
-
-#Figure 5: Average support for redistribution and economic development, by country and year (facet)
-figure5= ggplot(within, 
-            aes(x= gdp, y= redistribution, label=country)) +
-  geom_point(size = 1.5, alpha = 0.8) + 
-  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
-  geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE) +
-  labs(x = "Inequality", y =  "Support for redistribution",
-       caption = "Fuente: LAPOP 2008-2023; estadísticas descriptivas ponderadas; 
-las cifras informan de las medias de los países en preferencias redistributivas según PIB per capita.") + 
-  scale_color_grey(start=0.8, end=0.2, name="Año") +  
-  scale_y_continuous( "Media de preferencias redistributivas", limits = c(1,7), 
-                     breaks = c(1,2,3,4,5,6,7)) +
-  scale_x_continuous("PIB per capita", limits = c(0,16.1), 
-                     breaks = c(0,4,8,12,16)) +
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position="bottom",
-        axis.text=element_text(size=10),
-        strip.text=element_text(size=10),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=10),
-        legend.key.size=unit(1,"cm"),
-        panel.background = element_rect(fill = "white")) +  
-  facet_wrap(~ wave)  +
-  stat_cor(aes(label = ..r.label..), method = "pearson", 
-           label.x.npc = "right", label.y.npc = "bottom", size = 3, 
-           hjust = 1, vjust = -0.7)
-
-figure5
-ggsave(here("output", "graphs", "Figure5.jpg"), plot=figure5, height = 4, units="in")
-
-#Detach package conflicted
-#detach("package:conflicted", unload = TRUE)
-
-```
-
-# Average support for redistribution and corruption, by country and year.
-
-```{r}
-summary(within$corruption)
-within$corruption_invert <- -within$corruption  # Invertir los valores de corrupción
-
-figure6 <- ggplot(within, 
-       aes(x = corruption_invert, y = redistribution, label = country)) +
-  geom_point(size = 1.5, alpha = 0.8) + 
-  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
-  geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE, max.overlaps = 20) +
-  labs(x = "Corruption", y =  "Support for redistribution",
-       caption = "Fuente: LAPOP 2008-2023; estadísticas descriptivas ponderadas; 
-las cifras informan de las medias de los países en preferencias redistributivas según la percepción de corrupción de cada país.") +  
-  scale_color_grey(start = 0.8, end = 0.2, name = "Wave") +  
-  scale_y_continuous("Media de preferencias redistributivas", limits = c(1,7), 
-                     breaks = c(1,2,3,4,5,6,7)) +
-  scale_x_continuous("Corrupción", 
-                     limits = c(-2.5, 2.5), 
-                     breaks = c(-2.5, 0, 2.5), 
-                     labels = c("Baja", "Media", "Alta")) +
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position = "bottom",
-        axis.text = element_text(size = 10),
-        strip.text = element_text(size = 10),
-        legend.text = element_text(size = 10),
-        legend.title = element_text(size = 10),
-        legend.key.size = unit(1, "cm"),
-        panel.background = element_rect(fill = "white")) +  
-  facet_wrap(~ wave) +
-  stat_cor(aes(label = ..r.label..), method = "pearson", 
-           label.x.npc = "right", label.y.npc = "bottom", size = 3, 
-           hjust = 1, vjust = -0.7)
-
-figure6
-ggsave(here("output", "graphs", "Figure6.jpg"), plot=figure6, height = 4, units="in")
-```
-
-
-```{r}
-#Figure 7: Average support for redistribution and trust in institutions, by country and year (facet)
-figure7= ggplot(within, 
-            aes(x= sysconf, y= redistribution, label=country)) +
-  geom_point(size = 1.5, alpha = 0.8) + 
-  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
-  geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE, max.overlaps = 30) +
-  labs(x = "Inequality", y =  "Support for redistribution",
-       caption = "Fuente: LAPOP 2008-2023; estadísticas descriptivas ponderadas; 
-las cifras informan de las medias de los países en preferencias redistributivas según media de confianza en instituciones.") +  
-  scale_color_grey(start=0.8, end=0.2, name="Wave") +  
-  scale_y_continuous( "Media de preferencias redistributivas", limits = c(1,7), 
-                     breaks = c(1,2,3,4,5,6,7)) +
-    scale_x_continuous("Confianza en instituciones", limits = c(1,7), 
-                     breaks = c(1,2,3,4,5,6,7),
-                     labels=c("1 
-Baja", "2", "3", "4", "5", "6", "7 
-Alta")) +
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position="bottom",
-        axis.text=element_text(size=7.9),
-        strip.text=element_text(size=10),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=10),
-        legend.key.size=unit(1,"cm"),
-        panel.background = element_rect(fill = "white")) +  
-  facet_wrap(~ wave)  +
-  stat_cor(aes(label = ..r.label..), method = "pearson", 
-           label.x.npc = "right", label.y.npc = "bottom", size = 3, 
-           hjust = 1, vjust = -0.7)
-
-figure7
-ggsave(here("output", "graphs", "Figure7.jpg"), plot=figure7, height = 4, units="in")
-```
-
-# Average support for redistribution and educational level, by country and year.
-
-```{r}
-figure8 <- ggplot(lapop, aes(x = education_r, y = redistribution)) +
-  geom_violin(trim = FALSE, fill = "lightblue", color = "black", alpha = 0.7) +  # Gráfico de violín
- # geom_jitter(width = 0.2, size = 1.5, alpha = 0.8) +  # Opcional: superponer puntos para mayor detalle
-  labs(x = "Nivel educacional", y = "Media de preferencias redistributivas",
-       caption = "Fuente: LAPOP 2008-2023; estadísticas descriptivas ponderadas; 
-las cifras informan de las preferencias redistributivas para todos los países según nivel educacional.") + 
-  scale_y_continuous("Preferencias redistributivas", limits = c(1,7), 
-                     breaks = c(1:7)) +
-  scale_x_discrete(labels=c("Primaria", "Secundaria", "Terciaria"))+
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position = "bottom",
-        axis.text = element_text(size = 10),
-        strip.text = element_text(size = 10),
-        panel.background = element_rect(fill = "white")) +
-  facet_wrap(~ wave)  # Facets por año
-
-# Agrupa por país y nivel educativo, luego calcula el promedio
-library(survey)
-# Paso 1: Definir el diseño de la encuesta con los ponderadores
-lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
-
-# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por país y nivel educativo
-lapop_grouped <- svyby(~redistribution, ~country + education_r, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
-
-# Renombrar las columnas de intervalos de confianza para facilidad de uso
-lapop_grouped <- lapop_grouped %>%
-  rename(avg_redistribution = redistribution,
-         lower_ci = ci_l,
-         upper_ci = ci_u)
-
-# Paso 3: Crear el gráfico con los promedios ponderados y los intervalos de confianza
-figure8<-ggplot(lapop_grouped, aes(x = avg_redistribution, y = country, color = education_r)) +
-  geom_point(size = 2, alpha = 0.8) +  # Puntos para el promedio
-  geom_errorbarh(aes(xmin = lower_ci, xmax = upper_ci), height = 0.2, alpha = 0.7) +  # Intervalos de confianza
-  labs(x = "Promedio de apoyo a la redistribución", y = "", color="Educación") +  # Etiquetas de los ejes
-  scale_x_continuous("Media de preferencias redistributivas", limits = c(1, 7), breaks = c(1, 2, 3, 4, 5, 6, 7)) +
-  scale_color_discrete(labels = c("Primaria", "Secundaria", "Terciaria")) +  # Personaliza los nombres de las etiquetas
-  theme_minimal() +
-  theme(panel.grid.major = element_line(colour = "grey"),
-        strip.text = element_text(size = 12),
-        axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        legend.position = "top")  # Ajustes de estilo
-
-
-
-
-figure8
-ggsave(here("output", "graphs", "Figure8.jpg"), plot=figure8, height = 5, units="in")
-```
-
-# Average support for redistribution and ideology, by country and year.
-
-```{r}
-figure9 <- ggplot(lapop, aes(x = ideology_f, y = redistribution)) +
-  geom_violin(trim = FALSE, fill = "lightblue", color = "black", alpha = 0.7) +
-#  geom_text_repel(aes(label = country), size = 2.5, color = "black", show.legend = FALSE) +  # Agrega nombres de país en negro
-  labs(x = "Ideología", y = "Media de preferencias redistributivas",
-       caption = "Fuente: LAPOP 2008-2023; estadísticas descriptivas ponderadas; 
-las cifras informan de las preferencias redistributivas para todos los países según posición política.") + 
-  scale_y_continuous("Preferencias redistributivas", limits = c(1,7), 
-                     breaks = c(1:7)) +
-  scale_x_discrete(labels=c("Derecha", "Centro", "Izquierda", "No
-declarado"))+
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position = "bottom",
-        axis.text = element_text(size = 10),
-        strip.text = element_text(size = 10),
-        panel.background = element_rect(fill = "white")) +
-  facet_wrap(~ wave)  # Facetas por año
-
-figure9
-
-ggsave(here("output", "graphs", "Figure9.jpg"), plot=figure9, height = 5, units="in")
-```
-
-# Average support for redistribution and age, by country and year.
-
-```{r}
-#Figure 10: Average support for redistribution and trust in institutions, by country and year (facet)
-figure10= ggplot(within, 
-            aes(x= age, y= redistribution)) +
-  geom_point(size = 1.5, alpha = 0.8) + 
-  stat_smooth(size = 1, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
-  geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE) +
-  labs(x = "Media de edad", y =  "Support for redistribution",
-       caption = "Fuente: LAPOP 2008-2023; estadísticas descriptivas ponderadas; 
-las cifras informan de las medias de preferencias redistributivas por país según la media de edad.") + 
-  scale_color_grey(start=0.8, end=0.2, name="Wave") +  
-  scale_y_continuous( "Media de preferencias redistributivas", limits = c(1,7), 
-                     breaks = c(1:7)) +
-#  scale_x_continuous("Income (decile", limits = c(1,7), 
-#                     breaks = c(2,4,6,8,10)) +
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position="bottom",
-        axis.text=element_text(size=10),
-        strip.text=element_text(size=10),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=10),
-        legend.key.size=unit(1,"cm"),
-        panel.background = element_rect(fill = "white")) +  
-  facet_wrap(~ wave)   +
-  stat_cor(aes(label = ..r.label..), method = "pearson", 
-           label.x.npc = "right", label.y.npc = "bottom", size = 3, 
-           hjust = 1, vjust = -0.7)
-
-figure10
-ggsave(here("output", "graphs", "Figure10.jpg"), plot=figure10, height = 4, units="in")
-```
-
-
-
 
 
 
