@@ -16,7 +16,7 @@ output:
 #Install and load packages
 pacman::p_load(tidyverse, countrycode, car, zoo, wbstats, Hmisc, stargazer, stats,
        ggthemes, data.table, reshape2, scales, xtable, ggrepel, lme4, here, conflicted,
-       texreg, ggpubr, tidytext, survey)
+       texreg, ggpubr, tidytext, survey, janitor, openxlsx)
 
 #Packages conflicts
 conflict_prefer("select", "dplyr")
@@ -130,7 +130,7 @@ figure1 <- ggplot(redistribution_avg_country, aes(x = reorder(country, promedio_
             fill = "gray50", color = "gray50") +
   geom_errorbar(aes(ymin = pmax(1, promedio_redistribucion - 0.2), 
                     ymax = pmin(7, promedio_redistribucion + 0.2)), 
-                width = 0.1, color = "black") +
+                width = 0.1, color = "black", size = 0.5) +
   scale_y_continuous("Preferencias redistributivas", limits = c(1, 7), 
                      breaks = c(1, 2, 3, 4, 5, 6, 7)) +
   labs(x = "País") +
@@ -556,6 +556,81 @@ Alta")) +
 
 figure7
 ggsave(here("output", "graphs", "Figure7.jpg"), plot=figure7, height = 5, units="in")
+```
+
+
+## Migración
+
+```{r}
+migracion = read.xlsx(here("input", "original", "cepalstat_6547.xlsx")) %>% 
+  clean_names()
+
+migracion = migracion %>% 
+  filter(ano %in% c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) %>% 
+  rename(migra = value)
+
+migracion
+
+# Mapeo personalizado para nombres de países en español
+custom_match <- c(
+  "Argentina" = "ARG",
+  "Bolivia (Estado Plurinacional de)" = "BOL",
+  "Brasil" = "BRA",
+  "Chile" = "CHL",
+  "Colombia" = "COL",
+  "Costa Rica" = "CRI",
+  "Cuba" = "CUB",
+  "Ecuador" = "ECU",
+  "El Salvador" = "SLV",
+  "Guatemala" = "GTM",
+  "Honduras" = "HND",
+  "México" = "MEX",
+  "Nicaragua" = "NIC",
+  "Panamá" = "PAN",
+  "Paraguay" = "PRY",
+  "Perú" = "PER",
+  "República Dominicana" = "DOM",
+  "Uruguay" = "URY",
+  "Venezuela (República Bolivariana de)" = "VEN"
+)
+
+# Agregar la columna ISO3 usando el mapeo personalizado
+migracion <- migracion %>%
+  mutate(country = countrycode(pais, origin = "country.name", destination = "iso3c", custom_match = custom_match)) %>% 
+  mutate(wave = as.numeric(paste0(ano))) %>%
+  ungroup() %>% 
+  select(country, wave, migra)
+
+```
+
+```{r}
+
+within_migra = within %>% 
+  left_join(migracion)
+
+figure11 <- ggplot(within_migra, 
+            aes(x = migra, y = redistribution, label = country)) +
+  geom_point(size = 0.8, alpha = 0.8) + 
+  stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
+  geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE,
+                  max.overlaps = Inf,  # Ensure all labels are shown
+                  color = "grey50", segment.color = "grey50") +
+  labs(x = "Tasa de migración", 
+       y = "Preferencias redistributivas",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y tasa de migración (por cada mil habitantes), por país y año.", width = 120)) + 
+  scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
+  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
+  scale_x_continuous("Tasa de migración", limits = c(-13, 13),
+                     breaks = c(-10,-5,0,5,10)) +
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
+  facet_wrap(~ wave) +
+  stat_cor(aes(label = ..r.label..), method = "pearson", 
+           label.x.npc = "right", label.y.npc = "bottom", size = 2, 
+           hjust = 1, vjust = -0.7)
+
+figure11
+ggsave(here("output", "graphs", "Figure11.jpg"), plot = figure11, height = 5, units = "in")
 ```
 
 # Extras
