@@ -657,35 +657,6 @@ ggsave(here("output", "graphs", "Figure10.jpg"), plot = figure10, height = 5, un
 
 # Extras
 
-## Support for redistribution by country and year. Percentage by category.
-
-```{r Figure 3, echo=FALSE, message=FALSE, warning=FALSE}
-
-#Figure 3: Support for redistribution by country and year
-figureA1 = ggplot(lapop, aes(x= redistribution,  colour= year)) + 
-  geom_line(aes(y = ..prop.., fill = factor(..x..)), stat="count", binwidth = 1, size = 1) +
-  xlim(1, 7) +
-  facet_wrap(~countryname, ncol=3) +
-  labs(x = "Preferencias redistributivas", y = "", fill="Año") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_continuous(breaks = c(1:7), labels = c("1 (Desacuerdo)", "2", "3", "4", "5", "6", "7 (De acuerdo)")) +
-  theme(
-    axis.text=element_text(size=15),
-        strip.text=element_text(size=15),
-        legend.text=element_text(size=15),
-        legend.title=element_text(size=15),
-        legend.key.size=unit(0.5,"cm"),
-        legend.position = "bottom",
-        panel.background = element_rect(fill = "white"),
-        axis.text.x = element_text(angle = 90, hjust = 1, size = 10)) +
-  theme_hc() + 
-  scale_color_grey(start=0.9, end=0.1, name="Año") 
-
-figureA1
-ggsave(here("Output", "Graphs", "FigureA1.jpg"), plot=figureA1, height = 10, width = 9, units="in")
-
-```
-
 ## Average support for redistribution of income deciles, by country. {no deciles}
 
 ```{r Table 2, echo=FALSE, message=FALSE, warning=FALSE}
