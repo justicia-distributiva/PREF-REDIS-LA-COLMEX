@@ -563,7 +563,7 @@ figure9 <- ggplot(within,
   geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE, max.overlaps = 20,
                   color = "grey50", segment.color = "grey50") +
   labs(x = "Corruption", y =  "Support for redistribution",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y percepción de corrupción, por país y año.", width = 120)) + 
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y corrupción, por país y año.", width = 120)) + 
   scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
   scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
   scale_x_continuous("Corrupción", 
