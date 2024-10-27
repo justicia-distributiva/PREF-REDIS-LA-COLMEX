@@ -259,7 +259,7 @@ figure2
 
 # Factores individuales
 
-## Nivel educacional
+## Educación
 
 
 ```{r}
@@ -290,7 +290,7 @@ figure8 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype 
   geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
   geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = education_r), alpha = 0.2) +  # Bandas de confianza en gris
   labs(x = "Año", y = "Preferencias redistributivas",
-       linetype = "Nivel educacional", fill = "Nivel educacional",
+       linetype = "Educación", fill = "Educación",
        caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según nivel educacional y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
   scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
   scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
