@@ -331,9 +331,8 @@ lapop_grouped <- lapop_grouped %>%
                                  ideology_f=="Center" ~ "Centro",
                                  ideology_f=="Left" ~ "Izquierda",
                                  ideology_f=="Not declared" ~ "No declarada"
-                                ))
-
-
+                                )) %>% 
+  mutate(ideology_f = factor(ideology_f, levels = c("Derecha", "Centro", "Izquierda", "No declarada")))
 
 
 # Verificar los niveles de ideology_f
