@@ -6,42 +6,22 @@
 La @fig-pref-red muestra la media de las preferencias redistributivas en cada país considerando todos los años analizados. Destaca que si bien el rango de valores de cada país no varía demasiado (todos los países se encuentran entre 5 y 6), Bolivia y Honduras son los países con la menor media de preferencias redistributivas para el periodo 2008-2023, mientras que Chile y República Dominicana son los países con la media de preferencias redistributivas más alta para el periodo analizado. Considerando que ningún país se encuentra en promedio por debajo de 5, se puede indicar que existe un cierto consenso generalizado en América Latina sobre el papel que debería tener el Estado en la redistribución de recursos.
 
 
-```{r pref-red, echo=FALSE, fig.cap = "Media de preferencias redistributivas en América Latina para todos los años", fig.align='center'}
+```{r pref-red, echo=FALSE, fig.cap = "Media de preferencias redistributivas en América Latina, por país (2008-2023)", fig.align='center'}
 #| label: fig-pref-red
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure1.jpg")
+ knitr::include_graphics("output/graphs/Figure1.jpg")
 ```
 
 la @fig-pref-red-anio muestra el panorama general de cómo han cambiado las preferencias redistributivas para cada país entre 2008 y 2023. Si bien cada línea representa a un país, donde cada uno tiene sus propias especificidades y tendencias, es posible evidenciar que en América Latina en su conjunto presenta una pequeña disminución, en promedio, en el apoyo a políticas redistributivas. Por ejemplo, Chile (que en la @fig-pref-red era el promedio más alto en este periodo) en 2008 comienza con un promedio sobre 6 y termina en 2023 con un promedio cercano a 5,4. Asimismo, existen casos más extremos como Paraguay, que en 2008 es el promedio más alto con un valor cercano a 6,5 y en 2023 es uno de los promedios más bajos con un valor menor a 5.
 
 
-```{r pref-red--anio, echo=FALSE, fig.cap = "Media de preferencias redistributivas en América Latina para todos los años", fig.align='center'}
+```{r pref-red--anio, echo=FALSE, fig.cap = "Media de preferencias redistributivas en América Latina, por país y año", fig.align='center', fig.height=7}
 #| label: fig-pref-red-anio
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure2.jpg")
+ knitr::include_graphics("output/graphs/Figure2.jpg")
 ```
-
-
-La @fig-change-pref muestra de forma más específica el cambio de las preferencias redistributivas en América Latina desde 2008 hasta 2023. En términos generales, observamos que en la mayoría de los países, las respuestas se agrupan mayormente en las categorías más altas de la escala, lo que refleja una tendencia persistente hacia el apoyo a las políticas redistributivas. Sin embargo, a medida que avanzamos hacia los últimos años del análisis (2018 y 2023), se evidencia una disminución en la proporción de encuestados que se encuentran en los niveles más altos de acuerdo (categoría 7) en varios países. Esto sugiere que, si bien las preferencias redistributivas siguen siendo fuertes en la región, ha habido una moderación o un descenso en este apoyo en ciertos contextos.
-
-
-```{r change-pref-red, echo=FALSE, fig.cap = "Cambio en las preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
-#| label: fig-change-pref
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure3.jpg")
-```
-
 
 ## Factores individuales asociados a las preferencias redistributivas
 
 ### Interés propio
-
-*Estatus socioeconómico*
-
-```{r educ-redis, echo=FALSE, fig.cap = "Cambio en la relación entre educación y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
-#| label: fig-educ-redis
- knitr::include_graphics(path = here::here("output/graphs/Figure_ed.png"))
-```
-
-La @fig-educ-redis muestra la relación entre el nivel educativo y las preferencias redistributivas desglosado por año desde 2008 hasta 2023, con mediciones en intervalos de dos años entre 2008 y 2018, y una última medición en 2023. En términos generales, se observa una estabilidad en las preferencias redistributivas en los primeros años (2008-2014), con una ligera tendencia ascendente a medida que aumenta el nivel educativo. Sin embargo, a partir de 2016, el gráfico muestra un incremento más claro en las preferencias redistributivas entre quienes tienen educación secundaria y terciaria, en comparación con quienes solo tienen educación primaria. Este patrón parece mantenerse hasta 2023, aunque las diferencias tienden a suavizarse ligeramente en este último año. Adicionalmente, las diferencias entre niveles educativos, especialmente entre la educación secundaria y terciaria, son particularmente pronunciadas en los años posteriores a 2016. Así, la relación entre educación y preferencias redistributivas ha evolucionado con el tiempo, mostrando una mayor inclinación por la redistribución entre los más educados en los años recientes. Así, esta evidencia descriptiva muestra de que el nivel educativo está asociado con las actitudes hacia la redistribución, pero también muestra que esta relación ha cambiado a lo largo del tiempo, destacando una posible divergencia en los últimos años.
-
 
 *Edad*
 
@@ -51,19 +31,31 @@ En la mayoría de los años (excepto 2012 y 2018), existe una correlación posit
 
 ```{r edad-redis, echo=FALSE, fig.cap = "Cambio en la relación entre edad y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-edad-redis
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure10.jpg")
+ knitr::include_graphics("output/graphs/Figure3.jpg")
 ```
+
+*Educación*
+
+La @fig-educ-redis muestra la relación entre el nivel educativo y las preferencias redistributivas desglosado por año desde 2008 hasta 2023, con mediciones en intervalos de dos años entre 2008 y 2018, y una última medición en 2023. En términos generales, se observa una estabilidad en las preferencias redistributivas en los primeros años (2008-2014), con una ligera tendencia ascendente a medida que aumenta el nivel educativo. Sin embargo, a partir de 2016, el gráfico muestra un incremento más claro en las preferencias redistributivas entre quienes tienen educación secundaria y terciaria, en comparación con quienes solo tienen educación primaria. Este patrón parece mantenerse hasta 2023, aunque las diferencias tienden a suavizarse ligeramente en este último año. Adicionalmente, las diferencias entre niveles educativos, especialmente entre la educación secundaria y terciaria, son particularmente pronunciadas en los años posteriores a 2016. Así, la relación entre educación y preferencias redistributivas ha evolucionado con el tiempo, mostrando una mayor inclinación por la redistribución entre los más educados en los años recientes. Así, esta evidencia descriptiva muestra de que el nivel educativo está asociado con las actitudes hacia la redistribución, pero también muestra que esta relación ha cambiado a lo largo del tiempo, destacando una posible divergencia en los últimos años.
+
+
+```{r educ-redis, echo=FALSE, fig.cap = "Cambio en la relación entre educación y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+#| label: fig-educ-redis
+ knitr::include_graphics(path = here::here("output/graphs/Figure4.jpg"))
+```
+
 
 ### Valores
 
-*Posición política*
-
-```{r pol-redis, echo=FALSE, fig.cap = "Cambio en la relación entre posición política y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
-#| label: fig-pol-redis
- knitr::include_graphics(path = here::here("output/graphs/Figure_pol.png"))
-```
+*Identificación política*
 
 La @fig-pol-redis muestra que, a lo largo de los años, existe una tendencia general donde aquellos que se identifican con la izquierda muestran niveles consistentemente más altos de preferencias redistributivas en comparación con quienes se sitúan en la derecha. Sin embargo, las diferencias entre los grupos parecen ser relativamente moderadas en los primeros años (2008-2012), con una ligera variación en 2012, donde los encuestados de la izquierda y el centro muestran una leve disminución en sus preferencias redistributivas, mientras que las personas de derecha se mantienen estables. En los años posteriores (2016-2023), las preferencias redistributivas de los distintos grupos políticos se estabilizan, con un ligero aumento entre quienes se identifican con la izquierda y el centro, mientras que las personas de derecha muestran un patrón relativamente plano. En estos últimos años, la categoría "No declarada" también presenta un leve incremento en sus preferencias redistributivas, situándose más cerca de las actitudes de la izquierda. En conjunto, esta evidencia descriptiva sugiere que la posición política sigue siendo un predictor relevante de las actitudes redistributivas, con una clara tendencia a que quienes se identifican con la izquierda tengan actitudes más favorables hacia la redistribución, aunque las diferencias entre los grupos no parecen haber aumentado significativamente en los últimos años.
+
+
+```{r pol-redis, echo=FALSE, fig.cap = "Cambio en la relación entre identificación política y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+#| label: fig-pol-redis
+ knitr::include_graphics(path = here::here("output/graphs/Figure5.jpg"))
+```
 
 *Confianza en instituciones*
 
@@ -71,63 +63,88 @@ La @fig-conf-redis muestra el cambio en la relación entre la confianza en insti
 
 ```{r conf-redis, echo=FALSE, fig.cap = "Cambio en la relación entre confianza en instituciones y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-conf-redis
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure7.jpg")
+ knitr::include_graphics("output/graphs/Figure6.jpg")
 ```
 
 
 ## Determinantes nacionales
 
-*Desigualdad de ingresos*
+### Económicos
+
+*Desigualdad económica*
 
 La @fig-gini-redis muestra la relación entre el índice de Gini las preferencias redistributivas en América Latina para los años 2008-2023. Durante los primeros años (2008-2016), la correlación entre el índice de Gini y las preferencias redistributivas es mayormente negativa, aunque con diferentes magnitudes. Esto indica que en estos años, los países con mayor desigualdad tienden a mostrar menores niveles de apoyo a la redistribución. Por el contrario, en los años siguientes (2018-2023), la tendencia cambia, mostrando una correlación positiva aunque débil, lo que sugiere que en estos años, los países con mayores niveles de desigualdad comenzaron a mostrar un mayor apoyo a la redistribución.
 
-```{r gini-redis, echo=FALSE, fig.cap = "Cambio en la relación entre índice GINI y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+```{r gini-redis, echo=FALSE, fig.cap = "Cambio en la relación entre desigualdad económica y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-gini-redis
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure4.jpg")
+ knitr::include_graphics("output/graphs/Figure7.jpg")
 ```
 
 
-*Producto Interno Bruto*
+*Desarrollo económico*
 
 La @fig-pib-redis muestra la relación entre el Producto Interno Bruto (PIB) per cápita y las preferencias redistributivas en América Latina entre los años 2008-2023. En casi todos los años (excepto 2014), la relación entre el PIB per cápita y las preferencias redistributivas es positiva, lo que sugiere que los países con mayor nivel de desarrollo económico tienden a mostrar un mayor apoyo a la redistribución. Los coeficientes de correlación más altos se observan en 2010 (R = 0.68), 2018 (R = 0.61) y 2023 (R = 0.60), lo que indica que en estos años la relación entre el PIB per cápita y las preferencias redistributivas fue más relevante.
 
-```{r pib-redis, echo=FALSE, fig.cap = "Cambio en la relación entre PIB y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+```{r pib-redis, echo=FALSE, fig.cap = "Cambio en la relación entre desarrollo económico y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-pib-redis
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure5.jpg")
+ knitr::include_graphics("output/graphs/Figure8.jpg")
 ```
 
-*Percepción de corrupción*
+### Político-institucionales
+
+*Corrupción*
 
 La @fig-corr-redis muestra la relación entre la percepción de corrupción y las preferencias redistributivas en América Latina entre 2008 y 2023. En todos los años analizados, la relación entre la percepción de corrupción y las preferencias redistributivas es negativa, lo que sugiere que en los países donde la percepción de corrupción es más alta, el apoyo a las políticas redistributivas tiende a ser más bajo. Esta correlación negativa es más fuerte en algunos años que en otros, pero se mantiene constante a lo largo del tiempo. Los años 2010, 2016 y 2023 destacan por tener coeficientes de correlación más negativos (R = -0.61, -0.60, -0.52, respectivamente), lo que sugiere una relación más marcada entre mayores niveles de corrupción percibida y un menor apoyo a la redistribución.
 
 ```{r corr-redis, echo=FALSE, fig.cap = "Cambio en la relación entre corrupción y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-corr-redis
- knitr::include_graphics("https://justicia-distributiva.github.io/pref-redis-la-colmex/output/graphs/Figure6.jpg")
+ knitr::include_graphics("output/graphs/Figure9.jpg")
 ```
+
+### Socioculturales
+
+*Tasa de migración*
+
+La @fig-migra-redis muestra la relación entre la tasa de migración y las preferencias redistributivas en América Latina entre 2008 y 2023. Como se observa, no existe un patrón constante en el tiempo entre ambos indicadores. Si bien tanto al comienzo como al final del período estudiado (años 2008 y 2023, respectivamente), se evidencia una relación negativa entre inmigración y apoyo a la redistribución (R = -0.28, -0.13), en los años intermedios esta asociación se ve reducida, tornándose algunas veces incluso positiva. En 2023, por ejemplo, países con similares tasas de migración, como Bolivia y Costa Rica, experimentan un acuerdo con la redistribución promedio sumamente diferente entre sus ciudadanos. La ambivalencia de esta relación a lo largo de los años estudiados pone en entredicho una directa asociación entre mayores niveles de inmigración y menores niveles de apoyo a la acción redistributiva del Estado al interior de la región. 
+
+```{r migra-redis, echo=FALSE, fig.cap = "Cambio en la relación entre tasa de migración y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
+#| label: fig-migra-redis
+ knitr::include_graphics("output/graphs/Figure10.jpg")
+```
+
 
 ## Análisis de regresión multinivel
 
 En la @fig-multilevel se presentan los coeficientes de regresión de un análisis de regresión multinivel. Esta técnica se utiliza cuando los datos están organizados en diferentes niveles jerárquicos (o anidados). En este caso, tenemos datos sobre las preferencias redistributivas de invididuos en varios países de América Latina a lo largo del tiempo. De esta forma, cada nivel jerárquico permite capturar las diferencias dentro y entre los países, así como entre los diferentes años.
 
-```{r multilevel, echo=FALSE, results='asis', fig.cap="Coeficientes de regresión de preferencias redistributivas"}
-#| label: fig-multilevel
-pacman::p_load(here, lme4, dplyr, sjPlot, ggplot2)
+```{r multilevel1, include=FALSE, results='asis'}
+pacman::p_load(here, lme4, dplyr, sjPlot, ggplot2, stringr, marginaleffects)
 load(here("Input", "Proc", "LAPOP_Final.RData"))
 
+migracion = readRDS(here("input", "proc", "migracion.rds")) %>% 
+  mutate(wave = as.character(wave))
+
+lapop = lapop %>% 
+  left_join(migracion)
+
+```
+
+
+```{r multilevel2, include=FALSE, results='asis'}
 #Rename variables
 lapop = lapop %>% 
   mutate(Redistribution = redistribution,
-         Income = decile,
          Male = male_f,
          Age = age, 
+         Income = decile,
+         Income_Decile=decile_f, 
+         Education=education_r, 
          Political = ideology_f, 
          Left = left, 
 #         Married = married_f, 
          SystemConfidence=sysconf, 
 #         Employment=employment_r, 
-         Education=education_r, 
 #         Urban=zone, 
-         Income_Decile=decile_f, 
          GINI=gini,
          GDP=gdp,
          GINI_BE=gini_mean, 
@@ -141,55 +158,74 @@ lapop = lapop %>%
          Decile_d10 = decile_d10,
          Decile_d1 = decile_d1,
          Income2 = Income*Income,
-         Corrupcion = corruption)%>%
+         Corrupcion = corruption,
+          Migracion = migra) %>%
   mutate(across(where(haven::is.labelled), as.numeric))
 
 # Model 4. Individual predictors + GINI + GDP (Income)
-model_4 = lmer(Redistribution ~ 1 + Year+ Income + Male + Age + Education +
-                 Political + SystemConfidence + GINI + GDP + Corrupcion 
-                + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
-
-plot_model(model_4, 
-           type = "est",   # Muestra los coeficientes estimados
-           show.values = TRUE,  # Muestra los valores de los coeficientes
-           show.p = TRUE,  # Muestra los niveles de significancia
-           # title = "Coeficientes de regresión de preferencias redistributivas",
-           axis.labels = c("Corrupción", 
-                               "PBI",
-                               "GINI",
-                               "Confianza en instituciones",
-                               "No se identifica",
-                               "Izquierda", 
-                               "Centro (Ref. Derecha)", 
-                               "Terciaria", 
-                               "Secundaria (Ref. Primaria)", 
-                               "Edad",
-                               "Hombre (Ref. Mujer)", 
-                               "Ingreso",
-                               "Año 2023", 
-                               "Año 2018", 
-                               "Año 2016", 
-                               "Año 2014", 
-                               "Año 2012", 
-                               "Año 2010 (Ref. Año 2008)"),
-           grid = TRUE, 
-           value.offset = 0.4,  # Ajusta la posición del número de los coeficientes
-           dot.size = 1.5,  # Reduce el tamaño de los círculos
-           value.size = 3.5  # Reduce el tamaño de los números
-           ) +
-  theme(panel.grid.major = element_line(colour = "grey"),
-        legend.position = "bottom",
-        axis.text = element_text(size = 9),  # Ajusta el tamaño del texto del eje Y
-        strip.text = element_text(size = 9),
-        legend.text = element_text(size = 9),
-        legend.title = element_text(size = 9),
-        legend.key.size = unit(0.8, "cm"),  # Reduce el tamaño de la leyenda
-        panel.background = element_rect(fill = "white"))
+model_4 = lmer(Redistribution ~ 1 + Male + Age + Income + Education + 
+                 Political + SystemConfidence + GINI + GDP + Corrupcion + Migracion +
+                Year + (1 | CountryWave) + (1 | Country), data=lapop, weights=wt)
 ```
 
 
-```{r figures-individual, echo=F,output=F}
-pacman::p_load(here, lme4, dplyr, sjPlot, ggplot2,marginaleffects)
+```{r multilevel3, echo=FALSE, fig.cap="Coeficientes de regresión multinivel sobre preferencias redistributivas", message=FALSE, warning=FALSE, results='asis', fig.height=6}
+#| label: fig-multilevel
+
+figure11 = plot_model(model_4, 
+           type = "est",   # Muestra los coeficientes estimados
+           show.values = TRUE,  # Muestra los valores de los coeficientes
+           show.p = TRUE,  # Muestra los niveles de significancia
+           title = "" ,
+           axis.labels = c("Año: 2023",
+                           "Año: 2018",
+                           "Año: 2016",
+                           "Año: 2014",
+                           "Año: 2012",
+                           "Año: 2010",
+                           "Tasa de migración",
+                           "Corrupción",
+                           "Desarrollo económico",
+                           "Desigualdad económica",
+                           "Confianza instituciones",
+                           "Id. pol.: No declarada",
+                           "Id. pol.:Izquierda",
+                           "Id. pol.:Centro",
+                           "Educación: Terciaria",
+                           "Educación: Secundaria",
+                           "Ingreso",
+                           "Edad",
+                           "Sexo: Hombre"),
+           grid = TRUE, 
+           value.offset = 0.4,  # Ajusta la posición del número de los coeficientes
+           dot.size = 1.5,  # Reduce el tamaño de los círculos
+           value.size = 3.5,  # Reduce el tamaño de los números
+           vjust = 0.5,  # Centra las etiquetas del eje y
+           axis.title = element_blank(),  # Sin título en el eje x
+           axis.text.y = element_text(size = 9, hjust = 1),  # Ajusta el tamaño del texto del eje Y
+           axis.lim = c(-1, 0.5)  # Establece los límites del eje x
+) +
+    labs(x = "Variables", y =  "Coeficientes",
+       caption = str_wrap("Notas: N = 152.608 individuos, 112 países-años, 17 países. Categorías de referencia: mujer (sexo), primaria (educación), derecha (identificación política), 2008 (año). * p<0.1   ** p<0.05   *** p<0.01.", width = 100)) + 
+  ylim(-1, 0.5) + # Establece los límites del eje x
+    geom_hline(yintercept = 0, linetype = "dotted", color = "grey40", size = 0.8) +  # Línea punteada en el 0
+  scale_color_grey(start = 0.6, end = 0.2) +  # Escala de grises
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
+        panel.grid.major = element_line(colour = "grey"),
+        legend.position = "bottom",
+        panel.background = element_rect(fill = "white"),
+        axis.text.y = element_text(size = 9, hjust = 1)  # Ajuste adicional de las etiquetas
+  )
+
+figure11
+
+ggsave(here("output", "graphs", "Figure11.jpg"), plot=figure11, height = 6, units="in")
+
+```
+
+
+```{r figures-individual, eval=FALSE, include=FALSE, output=F}
 load(here("Input", "Proc", "LAPOP_Final.RData"))
 
 #Rename variables
@@ -271,7 +307,7 @@ geom_line()+
   scale_y_continuous(limits = c(4.5,6.5))+
   labs(x="Posición política",y = "Preferencias redistributivas",
        caption = "Fuente: LAPOP 2008-2023; valores son medias predichas basadas en modelo multinivel con ponderadores; 
-las cifras informan de las medias de preferencias redistributivas según posición política y año.") +
+las cifras informan de las medias de preferencias redistributivas según identificación política y año.") +
     theme(panel.grid.major = element_line(colour = "grey"),
         legend.position = "bottom",
         axis.text = element_text(size = 9),  # Ajusta el tamaño del texto del eje Y

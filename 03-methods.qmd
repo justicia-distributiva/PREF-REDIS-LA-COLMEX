@@ -1,13 +1,13 @@
 
 # Método
 
-La metodología propuesta para llevar a cabo esta investigación es de carácter cuantitativa con un énfasis descriptivo y exploratorio. Los datos a nivel individual provienen de la encuesta del Proyecto de Opinión Pública de América Latina (LAPOP) aplicada a hogares por los propios estados latinoamericanos. El estudio incluye una muestra estratificada en tres niveles, compuesta por: 152.608 individuos (nivel 1), anidados en 112 unidades de país por año (nivel 2), anidados en 17 países (nivel 3).
+La metodología propuesta para llevar a cabo esta investigación es de carácter cuantitativa con un énfasis descriptivo y exploratorio. Los datos a nivel individual provienen de la encuesta del Proyecto de Opinión Pública de América Latina (LAPOP) aplicada a hogares por los propios estados latinoamericanos. El estudio incluye una muestra estratificada en tres niveles, compuesta por: 152.608 individuos (nivel 1), anidados en 112 unidades de país-año (nivel 2), anidados en 17 países (nivel 3).
 
-La variable dependiente del estudio es el apoyo individual a la redistribución, medido en la pregunta: “El Estado [país correspondiente] debería implementar políticas firmes para reducir la desigualdad de ingresos entre ricos y pobres. ¿En qué medida está usted de acuerdo o en desacuerdo con esta afirmación?” Esta variable va de 1 (“muy en desacuerdo”) a 7 (“muy de acuerdo”).
+La variable dependiente del estudio es la *preferencia redistributiva* de las personas, entendida como el apoyo individual a la redistribución y medida a través de la pregunta: “El Estado [país correspondiente] debería implementar políticas firmes para reducir la desigualdad de ingresos entre ricos y pobres. ¿En qué medida está usted de acuerdo o en desacuerdo con esta afirmación?”. Esta variable oscila de 1 (“muy en desacuerdo”) a 7 (“muy de acuerdo”).
 
-Las principales variables independientes a nivel individual por analizar son el nivel de ingresos, el sexo, la edad, la identificación política (derecha, centro, izquierda y no declarado), la confianza en instituciones y el nivel educacional (primaria, secundaria y terciaria).
+Las principales variables independientes a nivel individual por analizar son el *sexo*, la *edad*, el *ingreso* (mensual del hogar, en deciles) y la *educación* alcanzada (primaria, secundaria y terciaria), así como la *identificación política* (derecha, centro, izquierda y no declarada) y la *confianza en instituciones* por parte de las personas.
 
-La *confianza en instituciones* se mide a partir del grado de confianza individual en distintas instituciones políticas (FFAA, policías, poder judicial, poder ejecutivo, congreso y partidos políticos). Cada una de estas instituciones se mide en una escala likert que va de 1 (“nada de confianza”) a 7 (“mucha confianza”). A partir de estas variables se construyó un índice promedio que mantiene los valores de 1 a 7.
+La *confianza en instituciones* se mide a partir del grado de confianza individual en seis instituciones públicas (fuerzas armadas, policías, poder judicial, poder ejecutivo, congreso y partidos políticos). La confianza hacia cada una de ellas se mide en una escala Likert que va de 1 (“nada de confianza”) a 7 (“mucha confianza”). A partir de estas variables se construyó un índice promedio de confianza institucional que, de la misma forma, oscila entre 1 y 7.
 
 Una descripción más detallada de estas variables se encuentra en la @tbl-desc-individuales
 
@@ -23,7 +23,7 @@ lapop <- lapop %>% ungroup()
 
 #Rename variables
 individuales = lapop %>% 
-  dplyr::select(Redistribution = redistribution,
+  dplyr::rename(Redistribution = redistribution,
          Income = decile,
          Male = male_f,
          Age = age, 
@@ -50,7 +50,7 @@ individuales = lapop %>%
          # Income2 = Income*Income,
 #         Corrupcion = corruption
 )%>%
-  mutate(across(where(is.labelled), ~ as.numeric(as_factor(.))))
+  mutate(across(where(is.labelled), ~ as.numeric(sjlabelled::as_factor(.))))
 
 individuales$Male <- factor(individuales$Male,
             labels=c( "Mujer",
@@ -70,13 +70,19 @@ individuales$Education <- factor(individuales$Education,
                       "Terciaria"
                      ))
 
-individuales$Redistribution <- set_label(x = individuales$Redistribution, label = "Redistribución")
-individuales$Income <- set_label(x = individuales$Income, label = "Ingresos")
+individuales$Redistribution <- set_label(x = individuales$Redistribution, label = "Preferencia redistributiva")
+individuales$Income <- set_label(x = individuales$Income, label = "Ingreso")
 individuales$Male <- set_label(x = individuales$Male, label = "Sexo")
 individuales$Age <- set_label(x = individuales$Age, label = "Edad")
+individuales$Education <- set_label(x = individuales$Education, label = "Educación")
 individuales$Political <- set_label(x = individuales$Political, label = "Identificación política")
 individuales$SystemConfidence <- set_label(x = individuales$SystemConfidence, label = "Confianza en instituciones")
-individuales$Education <- set_label(x = individuales$Education, label = "Nivel educacional")
+
+# Reoder
+individuales = individuales %>% 
+  select(Redistribution, Male, Age, Income, Education, Political, SystemConfidence)
+
+st_options(lang = "es")
 
 df<-dfSummary(individuales,
                plain.ascii = FALSE,
@@ -101,56 +107,49 @@ Además, el estudio considera cuatro variables nacionales: desigualdad económic
 
 La *desigualdad económica* se mide a través del coeficiente de GINI, que oscila entre valores de 0 (escenario de igualdad total donde todos los individuos tienen el mismo ingreso) y 1 (desigualdad total donde un individuo tiene todo el ingreso). Para mejorar su interpretación, la variable se multiplicó por un factor de 100, de modo que varía entre 0 y 100. En los casos en que no se contaba con la información para un año determinado, se decidió utilizar la información del año anterior al faltante. Estos datos son producidos por el Banco Mundial a partir de las Encuestas de Hogares Nacionales.
 
-El *desarrollo económico* se mide a través del Producto Interno Bruto (PIB) per cápita anual por objeto de gasto a precios constantes (2015) en miles de dólares. Este indicador también se presenta para cada unidad país-año. Este indicador es producido por el Banco Mundial a través de diversas fuentes como el Sistema de Cuentas nacionales de las Naciones Unidas.
+El *desarrollo económico* se mide a través del Producto Interno Bruto (PIB) per cápita anual por objeto de gasto a precios constantes (2015) en miles de dólares. Este indicador también se presenta para cada unidad país-año. Este indicador es producido por el Banco Mundial a través de diversas fuentes como el Sistema de Cuentas Nacionales de las Naciones Unidas.
 
-La *percepción de corrupción* proviene a partir del índice de "control de la corrupción" y mide la percepción de la corrupción dentro de un país. Este indicador está medido en una escala de -2.5 (fuerte corrupción) a 2.5 (bajo nivel de corrupción), sin embargo, el indicador fue recodificado de modo que un valor más alto indica una mayor percepción de corrupción en el país. Este indicador proviene del Worldwide Governance Indicators (WGI), que también es producido por el Banco mundial.
+La *corrupción* proviene del índice de control de la corrupción y mide la percepción de la corrupción dentro de un país. Este indicador está medido en una escala de -2.5 (fuerte corrupción) a 2.5 (bajo nivel de corrupción), sin embargo, el indicador fue recodificado de modo que un valor más alto indica una mayor percepción de corrupción en el país. Este indicador proviene del Worldwide Governance Indicators (WGI), que también es producido por el Banco mundial.
+
+Finalmente, la *tasa de migración* refiere a la razón entre el saldo neto migratorio anual correspondiente a un año determinado y la población media del mismo período, por cada mil habitantes. Se calcula como el cociente entre el saldo neto migratorio (diferencia media anual entre los inmigrantes y los emigrantes de una población) correspondiente a un período determinado en el numerador y la población media del mismo período en el denominador. El resultado se multiplica por 1.000 habitantes. Este indicador proviene de las Bases de Datos y Publicaciones Estadísticas de la Comisión Económica para América Latina y el Caribe.
 
 Una descripción más detallada de estas variables se encuentra en la @tbl-desc-nacionales
+
+```{r include=FALSE, results='asis'}
+pacman::p_load(here, lme4, dplyr, kableExtra, summarytools, sjlabelled, haven)
+load(here("Input", "Proc", "LAPOP_Final.RData"))
+
+nacionales <- country_vars_waves %>% 
+  ungroup() %>% 
+  filter(country!="VEN") %>% 
+  rename(wave = year)
+
+#Migración
+migracion = readRDS(here("input", "proc", "migracion.rds"))
+
+nacionales = nacionales %>% 
+  left_join(migracion)
+
+length(unique((nacionales$country)))
+```
+
 
 ```{r, results='asis', echo=FALSE}
 #| tbl-cap: "Variables nacionales"
 #| label: tbl-desc-nacionales
 
-pacman::p_load(here, lme4, dplyr, kableExtra, summarytools, sjlabelled, haven)
-load(here("Input", "Proc", "LAPOP_Final.RData"))
+nacionales = nacionales %>% 
+  rename(GINI = gini,
+         GDP = gdp,
+         Corrupcion = corruption,
+         Migracion = migra) %>% 
+  select(GINI, GDP, Corrupcion, Migracion)
 
-lapop <- lapop %>% ungroup()
-
-#Rename variables
-nacionales = lapop %>% 
-  dplyr::select(
-    #Redistribution = redistribution,
-     #    Income = decile,
-    #     Male = male_f,
-    #     Age = age, 
-    #     Political = ideology_f, 
-#        Left = left, 
-#         Married = married_f, 
-     #    SystemConfidence=sysconf, 
-#         Employment=employment_r, 
-      #   Education=education_r, 
-#         Urban=zone, 
-#         Income_Decile=decile_f, 
-          GINI=gini,
-          GDP=gdp,
-         # GINI_BE=gini_mean, 
-         # GINI_WE=gini_dif, 
-         # GDP_BE=gdp_mean, 
-         # GDP_WE=gdp_dif,
-         # Welfare = welfare,
-         # Country = countryname,
-         # CountryWave = country_wave,
-         # Year = year,
-         # Decile_d10 = decile_d10,
-         # Decile_d1 = decile_d1,
-         # Income2 = Income*Income,
-         Corrupcion = corruption
-)
-
-
-nacionales$GINI <- set_label(x = nacionales$GINI, label = "Índice Gini")
-nacionales$GDP <- set_label(x = nacionales$GDP, label = "Producto interno bruto per cápita")
-nacionales$Corrupcion <- set_label(x = nacionales$Corrupcion, label = "Índice de control de corrupción")
+#Labels
+nacionales$GINI <- set_label(x = nacionales$GINI, label = "Desigualdad económica")
+nacionales$GDP <- set_label(x = nacionales$GDP, label = "Desarrollo económico")
+nacionales$Corrupcion <- set_label(x = nacionales$Corrupcion, label = "Corrupción")
+nacionales$Migracion <- set_label(x = nacionales$Migracion, label = "Tasa de migración")
 
 st_options(lang = "es")
 

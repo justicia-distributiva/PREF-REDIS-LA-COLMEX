@@ -131,7 +131,7 @@ figure1 <- ggplot(redistribution_avg_country, aes(x = reorder(country, promedio_
   geom_errorbar(aes(ymin = pmax(1, promedio_redistribucion - 0.2), 
                     ymax = pmin(7, promedio_redistribucion + 0.2)), 
                 width = 0.1, color = "black", size = 0.5) +
-  scale_y_continuous("Preferencias redistributivas", limits = c(1, 7), 
+  scale_y_continuous("Preferencia redistributiva", limits = c(1, 7), 
                      breaks = c(1, 2, 3, 4, 5, 6, 7)) +
   labs(x = "País") +
   theme_minimal() +
@@ -212,7 +212,7 @@ figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion,
                   aes(label = country), 
                   nudge_x = 2.5,  
                   hjust = 0,  # Align labels to the left side of the label box
-                  size = 2,  # Smaller text size to fit more labels
+                  size = 3,  # Smaller text size to fit more labels
                   color = "grey50",  # Text color for labels
                   segment.color = "grey50", 
                   segment.size = 0.3, 
@@ -230,7 +230,7 @@ figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion,
                   aes(label = country), 
                   nudge_x = -2.5,  
                   hjust = 1,  # Align labels to the right side of the label box
-                  size = 2,  # Smaller text size to fit more labels
+                  size = 3,  # Smaller text size to fit more labels
                   color = "grey50",  # Text color for labels
                   segment.color = "grey50", 
                   segment.size = 0.3, 
@@ -242,7 +242,7 @@ figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion,
                   min.segment.length = 0) +  # Ensure all segments are drawn
 
   labs(x = "Año",
-       y = "Preferencias redistributivas") +
+       y = "Preferencia redistributiva") +
   theme_minimal() +
   theme(legend.position = "none") +  # Remove the legend
   scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023), 
@@ -250,7 +250,7 @@ figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion,
   scale_y_continuous(limits = c(4.5, 6.5))  # Set y-axis range from 4.5 to 6.5
 
 # Save the figure
-ggsave(here("output", "graphs", "Figure2.jpg"), plot = figure2, height = 3.5, units = "in")
+ggsave(here("output", "graphs", "Figure2.jpg"), plot = figure2, height = 5, units = "in")
 
 figure2
 
@@ -292,7 +292,7 @@ figure3 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype 
   geom_line(size = 0.8, color = "black") +  # Líneas en negro
   geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
   geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = age_group), alpha = 0.2) +  # Bandas de confianza en gris
-  labs(x = "Año", y = "Preferencias redistributivas",
+  labs(x = "Año", y = "Preferencia redistributiva",
        linetype = "Edad", fill = "Edad",
        caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según edad y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
   scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
@@ -345,7 +345,7 @@ figure4 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype 
   geom_line(size = 0.8, color = "black") +  # Líneas en negro
   geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
   geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = education_r), alpha = 0.2) +  # Bandas de confianza en gris
-  labs(x = "Año", y = "Preferencias redistributivas",
+  labs(x = "Año", y = "Preferencia redistributiva",
        linetype = "Educación", fill = "Educación",
        caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según nivel educacional y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
   scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
@@ -399,7 +399,7 @@ figure5 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype 
   geom_line(size = 0.8, color = "black") +  # Líneas en negro
   geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
   geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = ideology_f), alpha = 0.2) +  # Bandas de confianza en gris
-  labs(x = "Año", y = "Preferencias redistributivas",
+  labs(x = "Año", y = "Preferencia redistributiva",
        linetype = "Identificación política", fill = "Identificación política",
        caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según identificación política y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
   scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
@@ -454,7 +454,7 @@ figure6 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype 
   geom_line(size = 0.8, color = "black") +  # Líneas en negro
   geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
   geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = sysconf_group), alpha = 0.2) +  # Bandas de confianza en gris
-  labs(x = "Año", y = "Preferencias redistributivas",
+  labs(x = "Año", y = "Preferencia redistributiva",
        linetype = "Confianza en instituciones", fill = "Confianza en instituciones",
        caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según confianza en instituciones y año, basadas en modelo multinivel con ponderadores. Confianza en instituciones: Baja (<3 pts.), Media (3-5 pts), Alta (>5 pts.)", width = 120)) + 
   scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
@@ -499,12 +499,10 @@ figure7 <- ggplot(within,
   stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
   geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE,
                   color = "grey50", segment.color = "grey50") +
-  labs(x = "Desigualdad (Gini)", 
-       y = "Preferencias redistributivas",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas e índice de GINI, por país y año.", width = 120)) + 
+  labs(caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas e índice de GINI, por país y año.", width = 120)) + 
   scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
-  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
-  scale_x_continuous("GINI", limits = c(39, 60), 
+  scale_y_continuous("Preferencia redistributiva", limits = c(4, 6.5)) +
+  scale_x_continuous("Desigualdad económica", limits = c(39, 60), 
                      breaks = c(40, 45, 50, 55, 60)) +
   theme_bw() +
   theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
@@ -518,7 +516,7 @@ ggsave(here("output", "graphs", "Figure7.jpg"), plot = figure7, height = 5, unit
 
 ```
 
-## Desarrollo económica
+## Desarrollo económico
 
 ```{r Figure 5, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -529,11 +527,10 @@ figure8= ggplot(within,
   stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
   geom_text_repel(aes(label=country), size=2.5, show.legend = FALSE,
                   color = "grey50", segment.color = "grey50") +
-  labs(x = "Inequality", y =  "Support for redistribution",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y PIB per cápita, por país y año.", width = 120)) + 
+  labs(caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y PIB per cápita, por país y año.", width = 120)) + 
   scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
-  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
-  scale_x_continuous("PIB per capita", limits = c(0,16.1), 
+  scale_y_continuous("Preferencia redistributiva", limits = c(4, 6.5)) +
+  scale_x_continuous("Desarrollo económico", limits = c(0,16.1), 
                      breaks = c(0,4,8,12,16)) +
   theme_bw() +
   theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
@@ -562,10 +559,9 @@ figure9 <- ggplot(within,
   stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
   geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE, max.overlaps = 20,
                   color = "grey50", segment.color = "grey50") +
-  labs(x = "Corruption", y =  "Support for redistribution",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y corrupción, por país y año.", width = 120)) + 
+  labs(caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y corrupción, por país y año.", width = 120)) + 
   scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
-  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
+  scale_y_continuous("Preferencia redistributiva", limits = c(4, 6.5)) +
   scale_x_continuous("Corrupción", 
                      limits = c(-2.5, 2.5), 
                      breaks = c(-2.5, 0, 2.5), 
@@ -623,6 +619,8 @@ migracion <- migracion %>%
   ungroup() %>% 
   select(country, wave, migra)
 
+saveRDS(migracion, here("input", "proc", "migracion.rds"))
+
 ```
 
 ```{r}
@@ -637,11 +635,9 @@ figure10 <- ggplot(within_migra,
   geom_text_repel(aes(label = country), size = 2.5, show.legend = FALSE,
                   max.overlaps = Inf,  # Ensure all labels are shown
                   color = "grey50", segment.color = "grey50") +
-  labs(x = "Tasa de migración", 
-       y = "Preferencias redistributivas",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y tasa de migración (por cada mil habitantes), por país y año.", width = 120)) + 
+  labs(caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y tasa de migración (por cada mil habitantes), por país y año.", width = 120)) + 
   scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
-  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
+  scale_y_continuous("Preferencia redistributiva", limits = c(4, 6.5)) +
   scale_x_continuous("Tasa de migración", limits = c(-13, 13),
                      breaks = c(-10,-5,0,5,10)) +
   theme_bw() +
