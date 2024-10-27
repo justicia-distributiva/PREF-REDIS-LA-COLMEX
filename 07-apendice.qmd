@@ -62,7 +62,7 @@ tabla_casos <- tabla_casos %>%
 # Mostrar la tabla para PDF
 tabla_casos %>%
   arrange(country, year) %>%  # Ordenar por país y año
-  kable("latex", booktabs = TRUE, longtable = TRUE, col.names = c("País", "Año", "Cantidad de casos")) %>%
+  kable("latex", booktabs = TRUE, longtable = TRUE, col.names = c("País", "Año", "Cantidad de casos")) %>% 
   kable_styling(latex_options = c("hold_position", "repeat_header")) %>%
   collapse_rows(columns = 1, valign = "middle")
 
