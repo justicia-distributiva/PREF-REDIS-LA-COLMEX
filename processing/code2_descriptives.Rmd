@@ -259,113 +259,6 @@ figure2
 
 # Factores individuales
 
-## Educación
-
-
-```{r}
-
-# Lapop desagrupada
-lapop = lapop %>% ungroup()
-
-# Paso 1: Definir el diseño de la encuesta con los ponderadores
-lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
-
-# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
-lapop_grouped <- svyby(~redistribution, ~education_r + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
-
-# Renombrar las columnas de intervalos de confianza para facilidad de uso
-lapop_grouped <- lapop_grouped %>%
-  rename(avg_redistribution = redistribution,
-         lower_ci = ci_l,
-         upper_ci = ci_u) %>% 
-  mutate(year = as.numeric(paste0(year)),
-         education_r = case_when(education_r=="Primary" ~ "Primaria",
-                                 education_r=="Secondary" ~ "Secundaria",
-                                 education_r=="Tertiary" ~ "Terciaria"))
-
-
-# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
-figure8 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = education_r, group = education_r)) +
-  geom_line(size = 0.8, color = "black") +  # Líneas en negro
-  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
-  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = education_r), alpha = 0.2) +  # Bandas de confianza en gris
-  labs(x = "Año", y = "Preferencias redistributivas",
-       linetype = "Educación", fill = "Educación",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según nivel educacional y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
-  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
-  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
-  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
-  scale_linetype_manual(values = c("solid", "dashed", "dotted")) +  # Tipos de línea diferentes
-  theme_bw() +
-  theme(
-    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
-    legend.position = "bottom",
-    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
-    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
-    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
-  )
-
-# Mostrar el gráfico
-print(figure8)
-
-ggsave(here("output", "graphs", "Figure8.jpg"), plot=figure8, height = 5, units="in")
-
-```
-
-## Posición política
-
-```{r}
-# Paso 1: Definir el diseño de la encuesta con los ponderadores
-lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
-
-# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
-lapop_grouped <- svyby(~redistribution, ~ideology_f + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
-
-# Renombrar las columnas de intervalos de confianza para facilidad de uso
-lapop_grouped <- lapop_grouped %>%
-  rename(avg_redistribution = redistribution,
-         lower_ci = ci_l,
-         upper_ci = ci_u) %>% 
-  mutate(year = as.numeric(paste0(year)),
-         ideology_f = case_when(ideology_f=="Right" ~ "Derecha",
-                                 ideology_f=="Center" ~ "Centro",
-                                 ideology_f=="Left" ~ "Izquierda",
-                                 ideology_f=="Not declared" ~ "No declarada"
-                                )) %>% 
-  mutate(ideology_f = factor(ideology_f, levels = c("Derecha", "Centro", "Izquierda", "No declarada")))
-
-
-# Verificar los niveles de ideology_f
-unique(lapop_grouped$ideology_f)
-
-# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
-figure9 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = ideology_f, group = ideology_f)) +
-  geom_line(size = 0.8, color = "black") +  # Líneas en negro
-  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
-  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = ideology_f), alpha = 0.2) +  # Bandas de confianza en gris
-  labs(x = "Año", y = "Preferencias redistributivas",
-       linetype = "Posición política", fill = "Posición política",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según posición política y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
-  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
-  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
-  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
-  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash")) +  # Tipos de línea diferentes
-  theme_bw() +
-  theme(
-    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
-    legend.position = "bottom",
-    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
-    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
-    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
-  )
-
-# Mostrar el gráfico
-print(figure9)
-
-# Guardar el gráfico
-ggsave(here("output", "graphs", "Figure9.jpg"), plot = figure9, height = 5, units = "in")
-
-```
 
 ## Edad
 
@@ -395,7 +288,7 @@ lapop_grouped <- lapop_grouped %>%
 unique(lapop_grouped$age_group)
 
 # Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
-figure10 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = age_group, group = age_group)) +
+figure3 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = age_group, group = age_group)) +
   geom_line(size = 0.8, color = "black") +  # Líneas en negro
   geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
   geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = age_group), alpha = 0.2) +  # Bandas de confianza en gris
@@ -416,12 +309,174 @@ figure10 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype
   )
 
 # Mostrar el gráfico
-print(figure10)
+print(figure3)
 
 # Guardar el gráfico
-ggsave(here("output", "graphs", "Figure10.jpg"), plot = figure10, height = 5, units = "in")
+ggsave(here("output", "graphs", "Figure3.jpg"), plot = figure3, height = 5, units = "in")
 
 ```
+
+## Educación
+
+```{r}
+
+# Lapop desagrupada
+lapop = lapop %>% ungroup()
+
+# Paso 1: Definir el diseño de la encuesta con los ponderadores
+lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
+
+# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
+lapop_grouped <- svyby(~redistribution, ~education_r + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
+
+# Renombrar las columnas de intervalos de confianza para facilidad de uso
+lapop_grouped <- lapop_grouped %>%
+  rename(avg_redistribution = redistribution,
+         lower_ci = ci_l,
+         upper_ci = ci_u) %>% 
+  mutate(year = as.numeric(paste0(year)),
+         education_r = case_when(education_r=="Primary" ~ "Primaria",
+                                 education_r=="Secondary" ~ "Secundaria",
+                                 education_r=="Tertiary" ~ "Terciaria"))
+
+
+# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
+figure4 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = education_r, group = education_r)) +
+  geom_line(size = 0.8, color = "black") +  # Líneas en negro
+  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = education_r), alpha = 0.2) +  # Bandas de confianza en gris
+  labs(x = "Año", y = "Preferencias redistributivas",
+       linetype = "Educación", fill = "Educación",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según nivel educacional y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
+  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
+  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
+  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
+  scale_linetype_manual(values = c("solid", "dashed", "dotted")) +  # Tipos de línea diferentes
+  theme_bw() +
+  theme(
+    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
+    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
+    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
+  )
+
+# Mostrar el gráfico
+print(figure4)
+
+ggsave(here("output", "graphs", "Figure4.jpg"), plot=figure4, height = 5, units="in")
+
+```
+
+## Identificación política
+
+```{r}
+# Paso 1: Definir el diseño de la encuesta con los ponderadores
+lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
+
+# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
+lapop_grouped <- svyby(~redistribution, ~ideology_f + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
+
+# Renombrar las columnas de intervalos de confianza para facilidad de uso
+lapop_grouped <- lapop_grouped %>%
+  rename(avg_redistribution = redistribution,
+         lower_ci = ci_l,
+         upper_ci = ci_u) %>% 
+  mutate(year = as.numeric(paste0(year)),
+         ideology_f = case_when(ideology_f=="Right" ~ "Derecha",
+                                 ideology_f=="Center" ~ "Centro",
+                                 ideology_f=="Left" ~ "Izquierda",
+                                 ideology_f=="Not declared" ~ "No declarada"
+                                )) %>% 
+  mutate(ideology_f = factor(ideology_f, levels = c("Derecha", "Centro", "Izquierda", "No declarada")))
+
+
+# Verificar los niveles de ideology_f
+unique(lapop_grouped$ideology_f)
+
+# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
+figure5 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = ideology_f, group = ideology_f)) +
+  geom_line(size = 0.8, color = "black") +  # Líneas en negro
+  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = ideology_f), alpha = 0.2) +  # Bandas de confianza en gris
+  labs(x = "Año", y = "Preferencias redistributivas",
+       linetype = "Identificación política", fill = "Identificación política",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según identificación política y año, basadas en modelo multinivel con ponderadores.", width = 120)) + 
+  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
+  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
+  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
+  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash")) +  # Tipos de línea diferentes
+  theme_bw() +
+  theme(
+    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
+    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
+    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
+  )
+
+# Mostrar el gráfico
+print(figure5)
+
+# Guardar el gráfico
+ggsave(here("output", "graphs", "Figure5.jpg"), plot = figure5, height = 5, units = "in")
+
+```
+
+## Confianza en instituciones
+
+```{r}
+# Grupos de edad
+lapop = lapop %>% 
+  mutate(sysconf_group = case_when(sysconf < 3 ~ "Baja",
+                               sysconf %in% c(3:5) ~ "Media",
+                               sysconf > 5 ~ "Alta")) %>%
+  mutate(sysconf_group = factor(sysconf_group, levels = c("Baja", "Media", "Alta")))
+
+# Paso 1: Definir el diseño de la encuesta con los ponderadores
+lapop_survey <- svydesign(ids = ~1, data = lapop, weights = ~wt)
+
+# Paso 2: Calcular el promedio ponderado y los intervalos de confianza por nivel educativo y año
+lapop_grouped <- svyby(~redistribution, ~sysconf_group + year, lapop_survey, svymean, na.rm = TRUE, vartype = "ci")
+
+# Renombrar las columnas de intervalos de confianza para facilidad de uso
+lapop_grouped <- lapop_grouped %>%
+  rename(avg_redistribution = redistribution,
+         lower_ci = ci_l,
+         upper_ci = ci_u) %>% 
+    mutate(year = as.numeric(paste0(year)))
+
+# Verificar los niveles de sysconf_group
+unique(lapop_grouped$sysconf_group)
+
+# Paso 3: Crear el gráfico en escala de grises con distintos tipos de línea
+figure6 <- ggplot(lapop_grouped, aes(x = year, y = avg_redistribution, linetype = sysconf_group, group = sysconf_group)) +
+  geom_line(size = 0.8, color = "black") +  # Líneas en negro
+  geom_point(size = 1, alpha = 0.8, color = "black") +  # Puntos en negro
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = sysconf_group), alpha = 0.2) +  # Bandas de confianza en gris
+  labs(x = "Año", y = "Preferencias redistributivas",
+       linetype = "Confianza en instituciones", fill = "Confianza en instituciones",
+       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias predichas de preferencias redistributivas según confianza en instituciones y año, basadas en modelo multinivel con ponderadores. Confianza en instituciones: Baja (<3 pts.), Media (3-5 pts), Alta (>5 pts.)", width = 120)) + 
+  scale_y_continuous(limits = c(4.5, 6.5), breaks = seq(4.5, 6.5, 0.5)) +
+  scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023)) +
+  scale_fill_grey(start = 0.5, end = 0.5) +  # Escala de grises para las bandas de confianza
+  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash")) +  # Tipos de línea diferentes
+  theme_bw() +
+  theme(
+    plot.caption = element_text(hjust = 0, size = 8, colour = "grey40"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_line(color = "grey80", linetype = "solid", size = 0.5),  # Líneas de cuadrícula vertical cada unidad
+    panel.grid.minor.x = element_blank(),  # Eliminar líneas de cuadrícula menor en x
+    panel.grid.major.y = element_line(color = "grey80", linetype = "solid", size = 0.5)  # Líneas de cuadrícula en y
+  )
+
+# Mostrar el gráfico
+print(figure6)
+
+# Guardar el gráfico
+ggsave(here("output", "graphs", "Figure6.jpg"), plot = figure6, height = 5, units = "in")
+```
+
 
 # Determinantes nacionales
 
@@ -438,7 +493,7 @@ within = lapop %>%
 
 #Figure 4: Average support for redistribution and inequality, by country and year
 
-figure4 <- ggplot(within, 
+figure7 <- ggplot(within, 
             aes(x = gini, y = redistribution, label = country)) +
   geom_point(size = 0.8, alpha = 0.8) + 
   stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
@@ -458,8 +513,8 @@ figure4 <- ggplot(within,
            label.x.npc = "right", label.y.npc = "bottom", size = 2, 
            hjust = 1, vjust = -0.7)
 
-figure4
-ggsave(here("output", "graphs", "Figure4.jpg"), plot = figure4, height = 5, units = "in")
+figure7
+ggsave(here("output", "graphs", "Figure7.jpg"), plot = figure7, height = 5, units = "in")
 
 ```
 
@@ -468,7 +523,7 @@ ggsave(here("output", "graphs", "Figure4.jpg"), plot = figure4, height = 5, unit
 ```{r Figure 5, echo=FALSE, message=FALSE, warning=FALSE}
 
 #Figure 5: Average support for redistribution and economic development, by country and year (facet)
-figure5= ggplot(within, 
+figure8= ggplot(within, 
             aes(x= gdp, y= redistribution, label=country)) +
   geom_point(size = 0.8, alpha = 0.8) + 
   stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
@@ -487,21 +542,21 @@ figure5= ggplot(within,
            label.x.npc = "right", label.y.npc = "bottom", size = 2, 
            hjust = 1, vjust = -0.7)
 
-figure5
-ggsave(here("output", "graphs", "Figure5.jpg"), plot=figure5, height = 5, units="in")
+figure8
+ggsave(here("output", "graphs", "Figure8.jpg"), plot=figure8, height = 5, units="in")
 
 #Detach package conflicted
 #detach("package:conflicted", unload = TRUE)
 
 ```
 
-## Percepción de corrupción
+## Corrupción
 
 ```{r}
 summary(within$corruption)
 within$corruption_invert <- -within$corruption  # Invertir los valores de corrupción
 
-figure6 <- ggplot(within, 
+figure9 <- ggplot(within, 
        aes(x = corruption_invert, y = redistribution, label = country)) +
   geom_point(size = 0.8, alpha = 0.8) + 
   stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
@@ -511,7 +566,7 @@ figure6 <- ggplot(within,
        caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y percepción de corrupción, por país y año.", width = 120)) + 
   scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
   scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
-  scale_x_continuous("Percepción de corrupción", 
+  scale_x_continuous("Corrupción", 
                      limits = c(-2.5, 2.5), 
                      breaks = c(-2.5, 0, 2.5), 
                      labels = c("Baja", "Media", "Alta")) +
@@ -522,41 +577,9 @@ figure6 <- ggplot(within,
            label.x.npc = "right", label.y.npc = "bottom", size = 2, 
            hjust = 1, vjust = -0.7)
 
-figure6
-ggsave(here("output", "graphs", "Figure6.jpg"), plot=figure6, height = 5, units="in")
+figure9
+ggsave(here("output", "graphs", "Figure9.jpg"), plot=figure9, height = 5, units="in")
 ```
-## Confianza en instituciones
-
-```{r}
-#Figure 7: Average support for redistribution and trust in institutions, by country and year (facet)
-figure7= ggplot(within, 
-            aes(x= sysconf, y= redistribution, label=country)) +
-  geom_point(size = 0.8, alpha = 0.8) + 
-  stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
-  geom_text_repel(aes(label=country), size=2, show.legend = FALSE, max.overlaps = 30,
-                  color = "grey50", segment.color = "grey50") +
-  labs(x = "Inequality", y =  "Support for redistribution",
-       caption = str_wrap("Notas: LAPOP 2008-2023. Estadísticas descriptivas ponderadas. Medias de preferencias redistributivas y confianza en instituciones, por país y año.", width = 120)) + 
-  scale_color_grey(start = 0.8, end = 0.2, name = "Año") +  
-  scale_y_continuous("Preferencias redistributivas", limits = c(4, 6.5)) +
-    scale_x_continuous("Confianza en instituciones", limits = c(1,7), 
-                     breaks = c(1,2,3,4,5,6,7),
-                     labels=c("1 
-Baja", "2", "3", "4", "5", "6", "7 
-Alta")) +
-  theme_bw() +
-  theme(plot.caption = element_text(hjust = 0, size = 8, colour = "grey40")) +
-  facet_wrap(~ wave)  +
-  stat_cor(aes(label = ..r.label..), method = "pearson", 
-           label.x.npc = "right", label.y.npc = "bottom", size = 2, 
-           hjust = 1, vjust = -0.7)
-
-       
-
-figure7
-ggsave(here("output", "graphs", "Figure7.jpg"), plot=figure7, height = 5, units="in")
-```
-
 
 ## Migración
 
@@ -607,7 +630,7 @@ migracion <- migracion %>%
 within_migra = within %>% 
   left_join(migracion)
 
-figure11 <- ggplot(within_migra, 
+figure10 <- ggplot(within_migra, 
             aes(x = migra, y = redistribution, label = country)) +
   geom_point(size = 0.8, alpha = 0.8) + 
   stat_smooth(size = 0.6, method = "lm", se = FALSE, fullrange = TRUE, colour = "black") +   
@@ -628,8 +651,8 @@ figure11 <- ggplot(within_migra,
            label.x.npc = "right", label.y.npc = "bottom", size = 2, 
            hjust = 1, vjust = -0.7)
 
-figure11
-ggsave(here("output", "graphs", "Figure11.jpg"), plot = figure11, height = 5, units = "in")
+figure10
+ggsave(here("output", "graphs", "Figure10.jpg"), plot = figure10, height = 5, units = "in")
 ```
 
 # Extras
@@ -639,7 +662,7 @@ ggsave(here("output", "graphs", "Figure11.jpg"), plot = figure11, height = 5, un
 ```{r Figure 3, echo=FALSE, message=FALSE, warning=FALSE}
 
 #Figure 3: Support for redistribution by country and year
-figure3 = ggplot(lapop, aes(x= redistribution,  colour= year)) + 
+figureA1 = ggplot(lapop, aes(x= redistribution,  colour= year)) + 
   geom_line(aes(y = ..prop.., fill = factor(..x..)), stat="count", binwidth = 1, size = 1) +
   xlim(1, 7) +
   facet_wrap(~countryname, ncol=3) +
@@ -658,10 +681,11 @@ figure3 = ggplot(lapop, aes(x= redistribution,  colour= year)) +
   theme_hc() + 
   scale_color_grey(start=0.9, end=0.1, name="Año") 
 
-figure3
-ggsave(here("Output", "Graphs", "Figure3.jpg"), plot=figure3, height = 10, width = 9, units="in")
+figureA1
+ggsave(here("Output", "Graphs", "FigureA1.jpg"), plot=figureA1, height = 10, width = 9, units="in")
 
 ```
+
 ## Average support for redistribution of income deciles, by country. {no deciles}
 
 ```{r Table 2, echo=FALSE, message=FALSE, warning=FALSE}
