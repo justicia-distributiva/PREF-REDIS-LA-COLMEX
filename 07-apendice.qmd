@@ -65,9 +65,6 @@ tabla_casos %>%
   kable("latex", booktabs = TRUE, longtable = TRUE, col.names = c("País", "Año", "Cantidad de casos")) %>% 
   kable_styling(latex_options = c("hold_position", "repeat_header","scale_down")) %>%
   collapse_rows(columns = 1, valign = "middle")
-
-?kableExtra::kable_styling()
-
 ```
 
 ## Tabla de regresión multinivel
@@ -119,6 +116,7 @@ lapop = lapop %>%
 
 ```{r multilevel, echo=FALSE, results='asis'}
 #| label: tbl-multilevel
+#| tbl-cap: Tabla de regresión multinivel longitudinal
 
 # Model 1. Only years
 model_1 = lmer(Redistribution ~ 1
@@ -178,7 +176,7 @@ texreg::texreg(
                        "Var: Residual"),
   center = TRUE,
   caption.above = TRUE,
-  caption = "Tabla de regresión multinivel longitudinal",
+  # caption = "Tabla de regresión multinivel longitudinal",
   scalebox = 0.9,  # Ajuste del tamaño de la tabla
   booktabs = TRUE,  # Mejor formato para las tablas
   use.packages = FALSE,
@@ -186,5 +184,4 @@ texreg::texreg(
   include.rmse = FALSE,
   include.ci = FALSE
 )
-
 ```
