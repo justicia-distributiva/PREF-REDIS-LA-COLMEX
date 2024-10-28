@@ -182,7 +182,7 @@ redistribution_avg <- redistribution_avg %>%
 
 # Eliminar Nicaragua y Guatemala del conjunto de datos
 redistribution_avg <- redistribution_avg %>%
-  filter(!country %in% c("Nicaragua", "Guatemala"))
+  dplyr::filter(!country %in% c("Nicaragua", "Guatemala"))
 
 line_types <- c("Argentina" = "solid", 
                 "Bolivia" = "dotted", 
@@ -208,7 +208,7 @@ figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion,
   # Right-side labels (end of each line) with rectangular style and no curved edges
   geom_text_repel(data = redistribution_avg %>% 
                     group_by(country) %>% 
-                    filter(year == max(year, na.rm = TRUE)), 
+                    dplyr::filter(year == max(year, na.rm = TRUE)), 
                   aes(label = country), 
                   nudge_x = 2.5,  
                   hjust = 0,  # Align labels to the left side of the label box
@@ -226,7 +226,7 @@ figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion,
   # Left-side labels (start of each line) with rectangular style and no curved edges
   geom_text_repel(data = redistribution_avg %>% 
                     group_by(country) %>% 
-                    filter(year == min(year, na.rm = TRUE)), 
+                    dplyr::filter(year == min(year, na.rm = TRUE)), 
                   aes(label = country), 
                   nudge_x = -2.5,  
                   hjust = 1,  # Align labels to the right side of the label box
@@ -247,10 +247,10 @@ figure2 <- ggplot(redistribution_avg, aes(x = year, y = promedio_redistribucion,
   theme(legend.position = "none") +  # Remove the legend
   scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018, 2023), 
                      expand = expansion(mult = 0.1555)) +  # Minimized expand on the right for closer labels
-  scale_y_continuous(limits = c(4.5, 6.5))  # Set y-axis range from 4.5 to 6.5
+  scale_y_continuous(limits = c(4.5, 6.8))  # Set y-axis range from 4.5 to 6.5
 
 # Save the figure
-ggsave(here("output", "graphs", "Figure2.jpg"), plot = figure2, height = 5, units = "in")
+ggsave(here("output", "graphs", "Figure2.jpg"), plot = figure2, height = 10, width = 20,units = "cm")
 
 figure2
 
