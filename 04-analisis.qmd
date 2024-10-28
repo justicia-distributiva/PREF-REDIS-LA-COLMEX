@@ -41,7 +41,7 @@ La @fig-educ-redis muestra la relación entre el nivel educativo y las preferenc
 
 ```{r educ-redis, echo=FALSE, fig.cap = "Cambio en la relación entre educación y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-educ-redis
- knitr::include_graphics(path = here::here("output/graphs/Figure4.jpg"))
+ knitr::include_graphics("output/graphs/Figure4.jpg")
 ```
 
 
@@ -54,7 +54,7 @@ La @fig-pol-redis muestra que, a lo largo de los años, existe una tendencia gen
 
 ```{r pol-redis, echo=FALSE, fig.cap = "Cambio en la relación entre identificación política y preferencias redistributivas en América Latina 2008-2023", fig.align='center'}
 #| label: fig-pol-redis
- knitr::include_graphics(path = here::here("output/graphs/Figure5.jpg"))
+ knitr::include_graphics("output/graphs/Figure5.jpg")
 ```
 
 *Confianza en instituciones*
