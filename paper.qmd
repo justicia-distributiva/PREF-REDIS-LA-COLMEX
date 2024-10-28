@@ -18,6 +18,7 @@ format:
         \renewcommand*{\Authand}{, }
         \renewcommand*{\Authands}{, }
         \renewcommand\Affilfont{\small}
+    number-sections: true
 editor: source
 #bibliography: "../../input/bib/merit-redis-school.bib"
 author:
